@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir
+{
+    public partial class Tesztlap : Base
+    {
+        Panel Panel;
+        Control[] controlok;
+        ToolStripMenuItem Teszt;
+        private Tablainfo koltsfocsopinfo;
+        private Tablainfo koltsalcsopinfo;
+        private Tablainfo koltscsopinfo;
+        private Tablainfo koltsegkodok;
+        private Tablainfo termfocsopinfo;
+        private Tablainfo termalcsopinfo;
+        private Tablainfo termcsopinfo;
+        private Tablainfo termekkodok;
+        private Tablainfo koltsfocsopalcsop;
+        private Tablainfo koltsalcsopcsop;
+        private Tablainfo koltscsopkod;
+        private Tablainfo termfocsopalcsop;
+        private Tablainfo termalcsopcsop;
+        private Tablainfo termcsopkod;
+        
+        public Tesztlap(FakUserInterface fak, Panel panel,ToolStripMenuItem teszt)
+        {
+            InitializeComponent();
+            FakUserInterface = fak;
+            Panel = panel;
+            Teszt = teszt;
+            this.Dock = DockStyle.Fill;
+            koltsfocsopinfo = FakUserInterface.GetKodtab("C", "Koltsfocsop");
+            koltsalcsopinfo = FakUserInterface.GetKodtab("C", "Koltsalcsop");
+            koltscsopinfo = FakUserInterface.GetBySzintPluszTablanev("C", "KOLTSEGCSOPORT");
+            koltsegkodok = FakUserInterface.GetBySzintPluszTablanev("C", "KOLTSEGKOD");
+            termekkodok = FakUserInterface.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            termfocsopinfo = FakUserInterface.GetKodtab("C", "Termfocsop");
+            termalcsopinfo = FakUserInterface.GetKodtab("C", "Termalcsop");
+            termcsopinfo = FakUserInterface.GetKodtab("C", "Termcsop");
+            termekkodok = FakUserInterface.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            termfocsopalcsop = FakUserInterface.GetOsszef("C", "Termfocsopalcsop");
+            termalcsopcsop = FakUserInterface.GetOsszef("C", "Termalcsopcsop");
+            termcsopkod = FakUserInterface.GetOsszef("C", "Termcsopkod");
+            koltsfocsopalcsop = FakUserInterface.GetOsszef("C", "Koltsfocsopalcsop");
+            koltsalcsopcsop = FakUserInterface.GetOsszef("C", "Koltsalcsopcsop");
+            koltscsopkod = FakUserInterface.GetOsszef("C", "Koltscsopkod");
+        }
+        public void ShowTesztlap()
+        {
+            controlok=new Control[Panel.Controls.Count];
+            for(int i=0;i<Panel.Controls.Count;i++)
+                controlok[i]=Panel.Controls[i];
+            Panel.Controls.Clear();
+            Panel.Controls.Add(this);
+            
+
+        }
+
+        public override void ok_Click(object sender, EventArgs e)
+        {
+            Panel.Controls.Clear();
+            for(int i=0;i<controlok.Length;i++)
+                Panel.Controls.Add(controlok[i]);
+            Teszt.Visible = true;
+        }
+    }
+}

@@ -1,0 +1,164 @@
+#define teszt
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz;
+using FakPlusz.Alapfunkciok;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+
+namespace Vezir
+{
+    public partial class Elso : Form
+    {
+        private Bejelentkezo Bejel;
+        private string nev = "";
+        private string jelszo = "";
+        private string ujjelszo = "";
+        private string kjelszo = "";
+        private bool ok = false;
+        private DataTable rgazdatable = new DataTable();
+        private DataRow kezelorow;
+        private string kezeloid;
+        private string alkid;
+        private ArrayList kezeloidkar;
+        private DataTable kezelok = new DataTable();
+        public Elso(Bejelentkezo bejel, bool kellshow)
+        {
+            Bejel = bejel;
+            alkid = Bejel.alkid;
+            kezeloidkar = bejel.KezeloIdkArray;
+            Sqlinterface.RendszerUserConn(Bejel.Rendszerconn, Bejel.Userconn);
+            Sqlinterface.Select(kezelok, Bejel.Userconn,"KEZELOK", "", "", false);
+            InitializeComponent();
+            string maidat = DateTime.Today.ToShortDateString();
+            if (maidat.EndsWith("."))
+                maidat = maidat.Substring(0, maidat.Length - 1);
+            if (kezeloidkar.Count == 0)             // kell egy rendszergazda
+                this.Text = "Rendszergazda:";
+
+        }
+        private void textBox_Validated() //nev
+        {
+            Bejel.Nev = nev;
+            if (nev != "")
+            {
+                if (jelszo != "" && ok && kezelorow != null)
+                    Bejel.Kezeloid = kezelorow["KEZELO_ID"].ToString();
+                button1.Enabled = true;
+//                button2.Visible = true;
+            }
+        }
+        private void nev_Validated(object sender, EventArgs e)
+        {
+            nev = textBox1.Text;
+            if (nev == "")
+            {
+                ok = false;
+                kezelorow = null;
+                button1.Enabled = false;
+ //               button2.Visible = false;
+            }
+            else
+                Nevjelszoellen(nev, kjelszo);
+            //    //if (kezelorow == null)
+            //    //ok = false;
+            //else
+            //    ok = true;
+            //if (ok)
+            //    Nevjelszoellen(nev, kjelszo);
+            if (kezeloidkar.Count!=0 && kezelorow == null)
+                ok = false;
+            if (!ok)
+            {
+                jelszo = "";
+                ujjelszo = "";
+                kjelszo = "";
+                textBox2.Text = "";
+                textBox3.Text = "";
+            }
+        }
+        private void Nevjelszoellen(string nev, string jelszo)
+        {
+            ok = false;
+            if (kezeloidkar.Count == 0)
+            {
+                kjelszo = jelszo;
+                textBox2.UseSystemPasswordChar = false;
+                ok = true;
+            }
+            else
+            {
+                for (int i = 0; i < kezelok.Rows.Count; i++)
+                {
+                    kezelorow = kezelok.Rows[i];
+                    string egyid = kezelorow["KEZELO_ID"].ToString();
+                    if (kezeloidkar.IndexOf(egyid) != -1)
+                    {
+                        if (kezelorow["SZOVEG"].ToString().Trim() == nev || kezelorow["SZOVEG"].ToString().Trim() == "")
+                        {
+
+                            kjelszo = kezelorow["JELSZO"].ToString().Trim();
+                            if (kjelszo == "")
+                                textBox2.UseSystemPasswordChar = false;
+                            else
+                                textBox2.UseSystemPasswordChar = true;
+                            if (jelszo == "" || kjelszo == "" || kjelszo == jelszo)
+                                ok = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!ok)
+            {
+                textBox2.Text = "";
+                kezelorow = null;
+            }
+        }
+        private void jelszo_Validated(object sender, EventArgs e)
+        {
+            jelszo = textBox2.Text;
+            ok = true;
+            Nevjelszoellen(nev, jelszo);
+            if (kezeloidkar.Count !=0 && kezelorow == null)
+                ok = false;
+            if (!ok)
+            {
+                jelszo = "";
+                ujjelszo = "";
+                textBox2.Text = "";
+                textBox3.Text = "";
+            }
+            Bejel.jelszo = jelszo;
+            Bejel.ujjelszo = ujjelszo;
+            if (!ok)
+            {
+                button1.Enabled = false;
+//              button2.Visible = false;
+            }
+            else
+                button1.Enabled = true;
+            }
+
+        private void ujjelszo_Validated(object sender, EventArgs e)
+        {
+            if (nev == "" || jelszo == "")
+            {
+                ujjelszo = "";
+                textBox3.Text = "";
+            }
+            else
+            {
+                ujjelszo = textBox3.Text;
+                textBox_Validated();
+            }
+            Bejel.ujjelszo = ujjelszo;
+        }
+    }
+}

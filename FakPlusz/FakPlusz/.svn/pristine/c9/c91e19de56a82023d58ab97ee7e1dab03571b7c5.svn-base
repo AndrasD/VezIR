@@ -1,0 +1,65 @@
+namespace FakPlusz.SzerkesztettListak
+{
+    partial class Listaterv
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            //this.panel4.SuspendLayout();
+            //this.tabControl1.SuspendLayout();
+            //this.tabPage1.SuspendLayout();
+            //this.tabPage2.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // kelltreeview
+            // 
+//            this.kelltreeview.LineColor = System.Drawing.Color.Black;
+            // 
+            // alaptreeview
+            // 
+//            this.alaptreeview.LineColor = System.Drawing.Color.Black;
+            // 
+            // Listaterv
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "Listaterv";
+ //           this.panel4.ResumeLayout(false);
+ //           this.panel4.PerformLayout();
+//            this.tabControl1.ResumeLayout(false);
+            //this.tabPage1.ResumeLayout(false);
+            //this.tabPage1.PerformLayout();
+            //this.tabPage2.ResumeLayout(false);
+            //this.tabPage2.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+    }
+}

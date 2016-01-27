@@ -1,0 +1,189 @@
+﻿namespace Vezir
+{
+    partial class UjPartnerUserControl
+    {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.splitter4 = new System.Windows.Forms.Splitter();
+            this.dataGridView4 = new System.Windows.Forms.DataGridView();
+            this.megnev2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.szazal2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.megnev1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.szazal1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel4.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AlapTablaView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EgyszeruTablaView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OsszetettKozepsoTablaView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OsszetettAlsoTablaView)).BeginInit();
+            this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // panel5
+            // 
+            this.panel5.Size = new System.Drawing.Size(1079, 249);
+            // 
+            // panel1
+            // 
+            this.panel1.Location = new System.Drawing.Point(0, 3);
+            // 
+            // panel2
+            // 
+            this.panel2.Visible = false;
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.SystemColors.Control;
+            this.panel3.Controls.Add(this.splitter4);
+            this.panel3.Controls.Add(this.dataGridView4);
+            this.panel3.Controls.Add(this.dataGridView3);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel3.Location = new System.Drawing.Point(0, 572);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1079, 218);
+            this.panel3.TabIndex = 12;
+            // 
+            // splitter4
+            // 
+            this.splitter4.Location = new System.Drawing.Point(538, 0);
+            this.splitter4.Name = "splitter4";
+            this.splitter4.Size = new System.Drawing.Size(3, 218);
+            this.splitter4.TabIndex = 3;
+            this.splitter4.TabStop = false;
+            // 
+            // dataGridView4
+            // 
+            this.dataGridView4.AllowUserToAddRows = false;
+            this.dataGridView4.AllowUserToDeleteRows = false;
+            this.dataGridView4.AllowUserToResizeColumns = false;
+            this.dataGridView4.AllowUserToResizeRows = false;
+            this.dataGridView4.BackgroundColor = System.Drawing.SystemColors.ControlLight;
+            this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.megnev2,
+            this.szazal2});
+            this.dataGridView4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView4.Location = new System.Drawing.Point(538, 0);
+            this.dataGridView4.MultiSelect = false;
+            this.dataGridView4.Name = "dataGridView4";
+            this.dataGridView4.ReadOnly = true;
+            this.dataGridView4.RowHeadersVisible = false;
+            this.dataGridView4.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView4.Size = new System.Drawing.Size(541, 218);
+            this.dataGridView4.TabIndex = 2;
+            // 
+            // megnev2
+            // 
+            this.megnev2.HeaderText = "Megnevezés";
+            this.megnev2.Name = "megnev2";
+            this.megnev2.ReadOnly = true;
+            this.megnev2.Width = 440;
+            // 
+            // szazal2
+            // 
+            this.szazal2.HeaderText = "Felosztási százalék";
+            this.szazal2.Name = "szazal2";
+            this.szazal2.ReadOnly = true;
+            // 
+            // dataGridView3
+            // 
+            this.dataGridView3.AllowUserToAddRows = false;
+            this.dataGridView3.AllowUserToDeleteRows = false;
+            this.dataGridView3.AllowUserToResizeColumns = false;
+            this.dataGridView3.AllowUserToResizeRows = false;
+            this.dataGridView3.BackgroundColor = System.Drawing.SystemColors.ControlLight;
+            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView3.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.megnev1,
+            this.szazal1});
+            this.dataGridView3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.dataGridView3.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView3.MultiSelect = false;
+            this.dataGridView3.Name = "dataGridView3";
+            this.dataGridView3.ReadOnly = true;
+            this.dataGridView3.RowHeadersVisible = false;
+            this.dataGridView3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView3.Size = new System.Drawing.Size(538, 218);
+            this.dataGridView3.TabIndex = 1;
+            // 
+            // megnev1
+            // 
+            this.megnev1.HeaderText = "Megnevezés";
+            this.megnev1.Name = "megnev1";
+            this.megnev1.ReadOnly = true;
+            this.megnev1.Width = 440;
+            // 
+            // szazal1
+            // 
+            this.szazal1.HeaderText = "Felosztási százalék";
+            this.szazal1.Name = "szazal1";
+            this.szazal1.ReadOnly = true;
+            // 
+            // UjPartnerUserControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.panel3);
+            this.Name = "UjPartnerUserControl";
+            this.Controls.SetChildIndex(this.panel3, 0);
+            this.Controls.SetChildIndex(this.comboBox1, 0);
+            this.Controls.SetChildIndex(this.panel1, 0);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AlapTablaView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EgyszeruTablaView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OsszetettKozepsoTablaView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OsszetettAlsoTablaView)).EndInit();
+            this.panel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Splitter splitter4;
+        private System.Windows.Forms.DataGridView dataGridView4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn megnev2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn szazal2;
+        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn megnev1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn szazal1;
+
+    }
+}

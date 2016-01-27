@@ -1,0 +1,17 @@
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\Tervezo.exe.config
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\Tervezo.exe
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\Tervezo.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\Tervezo.exe
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\Tervezo.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\FakPlusz.dll
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\FormattedTextBox.dll
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\FakPlusz.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\FakPlusz.xml
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\FormattedTextBox.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Release\FormattedTextBox.xml
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\Tervezo.Main.resources
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\Tervezo.Properties.Resources.resources
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\Tervezo.TervControl.resources
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\GenerateResource-ResGen.read.1.tlog
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Release\GenerateResource-ResGen.write.1.tlog

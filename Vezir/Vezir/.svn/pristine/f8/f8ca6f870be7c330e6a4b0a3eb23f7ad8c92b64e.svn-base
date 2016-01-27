@@ -1,0 +1,51 @@
+USE [vezir_alkalm]
+GO
+
+/****** Object:  Table [dbo].[BANKIMOZGAS]    Script Date: 12/27/2011 10:28:33 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[BANKIMOZGAS]') AND type in (N'U'))
+DROP TABLE [dbo].[BANKIMOZGAS]
+GO
+
+USE [vezir_alkalm]
+GO
+
+/****** Object:  Table [dbo].[BANKIMOZGAS]    Script Date: 12/27/2011 10:28:33 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[BANKIMOZGAS](
+	[BANKIMOZGAS_ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[CEGHONAP_ID] [bigint] NULL,
+	[SZLA_DATUM] [datetime] NOT NULL,
+	[BETET] [decimal](18, 0) NOT NULL,
+	[TERMEKKOD_ID] [bigint] NULL,
+	[TERMCSOP_ID] [bigint] NULL,
+	[TERMALCSOP_ID] [bigint] NULL,
+	[TERMFOCSOP_ID] [bigint] NULL,
+	[KIVET] [decimal](18, 0) NULL,
+	[KOLTSEGKOD_ID] [bigint] NULL,
+	[KOLTSCSOP_ID] [bigint] NULL,
+	[KOLTSALCSOP_ID] [bigint] NULL,
+	[KOLTSFOCSOP_ID] [bigint] NULL,
+	[FOLYOSZAMLA_ID] [bigint] NULL,
+	[SZOVEG] [varchar](500) NOT NULL,
+	[LAST_MOD] [datetime] NULL,
+ CONSTRAINT [PK_BANKIMOZGAS] PRIMARY KEY CLUSTERED 
+(
+	[BANKIMOZGAS_ID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) 
+ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+

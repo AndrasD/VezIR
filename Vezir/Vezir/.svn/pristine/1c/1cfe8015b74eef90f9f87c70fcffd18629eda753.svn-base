@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir
+{
+    public partial class UjPartnerUserControl : Gridpluszinput
+    {
+        private Form Parentform;
+        public UjPartnerUserControl(Form parent, Vezerloinfo vezerles,Tablainfo partner)
+        {
+            InitializeComponent();
+            Parentform = parent;
+            ParameterAtvetel(vezerles, false);
+            Hivo = Vezerles.AktivControl;
+            Hivo.AktivControl = this;
+            Vezerles = vezerles;
+            Tabinfo = partner;
+            TablainfoTag = partner.TablaTag;
+            Tabinfo.DataView.RowFilter = "PARTNER_ID = null or PARTNER_ID = 0";
+        }
+        public override void AltalanosInit()
+        {
+            UjTag = true;
+            base.AltalanosInit();
+            Hivo.Hivo.AltalanosInit();
+        }
+        public override void ok_Click(object sender, EventArgs e)
+        {
+            base.ok_Click(sender, e);
+        }
+        public override string EgyediHibavizsg(DataGridViewCell dcell, Tablainfo tabinfo)
+        {
+            return Hivo.Hivo.EgyediHibavizsg(dcell, tabinfo);
+        }
+        public override void rogzit_Click(object sender, EventArgs e)
+        {
+            base.rogzit_Click(sender, e);
+            Hivo.Hivo.RogzitesUtan();
+            Parentform.DialogResult = DialogResult.OK;
+            Parentform.Close();
+        }
+    }
+}

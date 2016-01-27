@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Threading;
+using System.Globalization;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+
+namespace Vezir
+{
+    public partial class Main : MainAlap
+    {
+        public Bejelentkezo Bejelentkezo;
+        public Main()
+        {
+            InitializeComponent();
+            Alkalmazas = "VEZIR";
+            MainControlNev = "MainControl";
+//            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
+            this.Icon =(System.Drawing.Icon)global::Vezir.Properties.Resources.king_icon;               //((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+        }
+        public override bool AlkalmazasBejelentkezes()
+        {
+            Bejelentkezo = new Bejelentkezo();
+            //Bejelentkezo.Bejelform.panel1.BackgroundImage = global::Vezir.Properties.Resources.king_icon;
+            //Bejelentkezo.Bejelform.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+
+            Bejelentkezo.BejelentkezoAlapInit(connstringek, Alkalmazas);
+            //                Bejelform.BejelformAlapInit(Bejelentkezo, true);
+            //                Bejelform
+            return Bejelentkezo.Show(true, global::Vezir.Properties.Resources.king_icon, System.Windows.Forms.ImageLayout.Zoom);
+        }
+        public override void AlkalmazasMainControlIndit()
+        {
+            Bejelentkezo.FakUserInterface = FakUserInterface;
+            FakUserInterface.OpenProgress("                      Vezir inicializálás");
+            FakUserInterface.SetProgressText("");
+            close = Bejelentkezo.Bejeltolt();
+            if (close)
+            {
+                FakUserInterface.CloseProgress();
+                this.Close();
+            }
+            else
+            {
+                FakUserInterface.SetProgressText("");
+                FakUserInterface.KezeloId = Convert.ToInt32(Bejelentkezo.Kezeloid);
+                FakUserInterface.EventTilt = true;
+                AktivControl = new MainControl(FakUserInterface, Bejelentkezo, panel1, this);
+                FakUserInterface.EventTilt = false;
+                FakUserInterface.CloseProgress();
+                AktivControl.Dock = DockStyle.Fill;
+                Base cont = AktivControl.AktivControl.AktivControl;
+                panel1.Visible = true;
+                if (cont != null)
+                {
+                    cont.Focus();
+                }
+                if (panel1.Controls.Count == 0)
+                {
+                    close = true;
+                    this.Close();
+                }
+            }
+
+        }
+        public override void Main_Load(object sender, EventArgs e)
+        {
+            base.Main_Load(sender, e);
+        }
+        public override void MainForm_Closeing(object sender, FormClosingEventArgs e)
+        {
+            base.MainForm_Closeing(sender, e);
+        }
+    }
+}

@@ -1,0 +1,121 @@
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Threading;
+using System.Globalization;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+namespace Vezir
+{
+    public partial class Main : Form
+    {
+        private bool bejelshow = true;
+        private Bejelentkezo Bejelentkezo;
+        private Base AktivControl = null;
+        private bool close = false;
+        private FakUserInterface FakUserInterface = null;
+        private string[] connstringek = null;
+        public string Alkalmazas = "VEZIR";
+        public Main()
+        {
+            InitializeComponent();
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("hu-Hu");
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+
+            this.Refresh();
+            panel1.Visible = false;
+ //           connstringek = GetConnStrings.GetConnectionStrings("Connection.txt", "BackupPath.txt");
+            connstringek = GetConnStrings.GetConnectionStrings("Connection.txt");
+            if (connstringek == null)
+            {
+                close = true;
+                this.Close();
+            }
+            else
+            {
+                Bejelentkezo = new Bejelentkezo(connstringek, Alkalmazas);
+                close = Bejelentkezo.Show(bejelshow);
+                if (close)
+                    this.Close();
+                else
+                {
+ //                   connstringek = Bejelentkezo.connectionstringek;
+                    this.Refresh();
+                    FakUserInterface = new FakUserInterface(Alkalmazas, this, true, connstringek, null, -1);
+                    if (FakUserInterface.BajVan)
+                    {
+                        close = true;
+                        this.Close();
+                    }
+                    else
+                    {
+                        Bejelentkezo.FakUserInterface = FakUserInterface;
+                        FakUserInterface.OpenProgress("                      Vezir inicializálás");
+                        FakUserInterface.SetProgressText("");
+                        close = Bejelentkezo.Bejeltolt();
+                        if (close)
+                        {
+                            FakUserInterface.CloseProgress();
+                            this.Close();
+                        }
+                        else
+                        {
+                            FakUserInterface.SetProgressText("");
+                            FakUserInterface.KezeloId = Convert.ToInt32(Bejelentkezo.Kezeloid);
+                            FakUserInterface.EventTilt = true;
+                            AktivControl = new MainControl(FakUserInterface, Bejelentkezo, panel1, this);
+                            FakUserInterface.EventTilt = false;
+                            FakUserInterface.CloseProgress();
+                            AktivControl.Dock = DockStyle.Fill;
+                            Base cont = AktivControl.AktivControl.AktivControl;
+                            panel1.Visible = true;
+                            if (cont != null)
+                            {
+                                cont.Focus();
+                            }
+                            if (panel1.Controls.Count == 0)
+                            {
+                                close = true;
+                                this.Close();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!close)
+            {
+                Base cont = AktivControl.AktivControl.AktivControl;
+                if (cont != null)
+                {
+                    if (cont.Name == "Formvezerles"&& cont.AktivControl!=null && cont.AktivControl.Userabortkerdes(cont.AktivControl.Tabinfo))
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    if (cont.Name != "Formvezerles" && cont.Userabortkerdes())
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                FakPlusz.MessageBox.DialogResult valasz;
+                valasz = FakUserInterface.MunkaVege(this, UserParamTabla.AktualCegInformacio.KezeloiSzint);
+                if (valasz == FakPlusz.MessageBox.DialogResult.Cancel)
+                    e.Cancel = true;
+            }
+        }
+    }
+}

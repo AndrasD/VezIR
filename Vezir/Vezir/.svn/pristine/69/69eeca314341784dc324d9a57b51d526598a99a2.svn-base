@@ -1,0 +1,50 @@
+USE [vezir_alkalm]
+GO
+
+/****** Object:  Table [dbo].[BEVSZLA]    Script Date: 01/22/2012 15:32:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[BEVSZLA]') AND type in (N'U'))
+DROP TABLE [dbo].[BEVSZLA]
+GO
+
+USE [vezir_alkalm]
+GO
+
+/****** Object:  Table [dbo].[BEVSZLA]    Script Date: 01/22/2012 15:32:26 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[BEVSZLA](
+	[BEVSZLA_ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[CEGHONAP_ID] [bigint] NOT NULL,
+	[FIZETVE] [varchar](1) NOT NULL,
+	[PARTNER_ID] [bigint] NOT NULL,
+	[AZONOSITO] [varchar](45) NULL,
+	[MEGJEGYZES] [varchar](5000) NULL,
+	[SZLA_DATUM] [datetime] NOT NULL,
+	[OSSZBEVETEL] [decimal](18, 0) NOT NULL,
+	[KIEGYENL_DATUM] [datetime] NULL,
+	[DATUM_FIZ] [datetime] NOT NULL,
+	[DATUM_TELJ] [datetime] NOT NULL,
+	[FOLYOSZAMLA_ID] [bigint] NULL,
+	[PENZTAR_ID] [bigint] NULL,
+	[LAST_MOD] [datetime] NULL,
+	[MARADEK] [decimal](18, 0) NULL,
+	[TETELSOROK_SZAMA] [int] NULL,
+ CONSTRAINT [PK_BEVSZLA] PRIMARY KEY CLUSTERED 
+(
+	[BEVSZLA_ID] DESC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+

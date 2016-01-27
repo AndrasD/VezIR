@@ -1,0 +1,1056 @@
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+using Vezir.ENYEM.Main;
+namespace Vezir
+{
+    public partial class MainControl : Base
+    {
+        private Tesztlap Tesztlap = null;
+        private bool cegvaltas = false;
+        private bool aktivcegekelnek = true;
+        private new Base.KezSzint KezeloiSzint = Base.KezSzint.Fejleszto;
+        private Ceginformaciok[] AktivCeginformaciok = null;
+        private Panel MainPanel;
+        private VezerloinfoCollection VezerloinfoCollection = new VezerloinfoCollection();
+        public Main MainForm;
+        public TreeView EgyTreeView;
+        public ArrayList CegPluszCegszintuTablanevek = new ArrayList();
+        public Ceginformaciok AktualCeginformacio;
+        public Formvezerles FormVezerles;
+        public VezerloControl VezerloControl = null;
+        public string[] letezousercontrolnevek = new string[] { "Bevszla", "Bevszlakiegyenl", "Koltsszla", "Koltsszlakiegyenl", "Folyofolyo", "Folyopenztar", "Folyokivet", "Folyobetet", "Penztarpenztar", "Penztarfolyo", "Penztarkivet", "Penztarbetet", "Bevetelek","Kiadasok","Penzmozgas","Afaforgalom","Egyenleg", "Eveseredmeny", "Ujhonap","Evzar","Evnyit", "Szerklist"};
+        public string[] Kellusertablak = new string[] { "SZUTKEZELOK", "SZUTRENDSZERGAZDA", "SZUOKEZELOALKALM" };
+        public string[] Kellcegtablak = new string[] {"SZCKTermfocsop","SZCKTermalcsop","SZCKTermcsop",
+            "SZCKKoltsfocsop","SZCKKoltsalcsop","SZCKKoltscsop","SZCKAfa","SZCKSema","SZCKFszazal","SZCTCEGKEZELOKIOSZT",
+            "SZCTPARTNER","SZCOTfocsoptalcsop","SZCOTalcsoptcsop","SZCOKfocsopkalcsop","SZCOKalcsopkcsop"};
+        public MainControl(FakUserInterface fakuserinterface, Bejelentkezo bejelentkezo, Panel mainpanel, Main maincont)
+        {
+            MainForm = maincont;
+            FakUserInterface = fakuserinterface;
+            UserParamTabla.Open(bejelentkezo, this);
+            MainPanel = mainpanel;
+            MainPanel.Controls.Add(this);
+            InitializeComponent();
+            MenuPanel = panel2;
+            EgyTreeView = treeView1;
+            kezelonev.Text = bejelentkezo.Nev;
+            AktivCeginformaciok = UserParamTabla.AktivCegInformaciok;
+            if (!UserParamTabla.LezartCeg)
+            {
+                aktivcegekelnek = true;
+                aktivcegek.Enabled = false;
+                if (UserParamTabla.LezartCegInformaciok == null || UserParamTabla.LezartCegInformaciok.Length == 0)
+                    lezartcegek.Enabled = false;
+            }
+            else
+            {
+                aktivcegekelnek = false;
+                lezartcegek.Enabled = false;
+                if (UserParamTabla.AktivCegInformaciok == null || UserParamTabla.AktivCegInformaciok.Length == 0)
+                    aktivcegek.Enabled = false;
+            }
+            comboBox2.Items.AddRange(UserParamTabla.CegNevek);
+            FakUserInterface.ProgressRefresh();
+            comboBox2.SelectedIndex = UserParamTabla.AktivCegIndex;
+            AktualCeginformacio = UserParamTabla.AktualCegInformacio;
+            KezeloiSzint = AktualCeginformacio.KezeloiSzint;
+            HozferJog = Base.HozferJogosultsag.Irolvas;
+            Valtozaskezeles.ValtozaskezelesInit(FakUserInterface, MainForm.Alkalmazas);
+            Vezerles = new Vezerloinfo(FakUserInterface, "MainControl", null, ref KezeloiSzint, ref HozferJog, new ArrayList(letezousercontrolnevek));
+            TermCegPluszCegalattiTabinfok = UserParamTabla.TermCegPluszCegalattiTablainfok;
+            CegPluszCegszintuTablanevek = UserParamTabla.TermTablaNevek;
+            Vezerloinfo parentvez = Vezerles;
+            Vezerles.Control = this;
+            string contnev;
+            for (int i = 0; i < Vezerles.ControlNevek.Count; i++)
+            {
+                FakUserInterface.ProgressRefresh();
+                contnev = Vezerles.ControlNevek[i].ToString();
+                switch (contnev)
+                {
+                    case "VezerloControl":
+                        VezerloControl = new VezerloControl(FakUserInterface, Vezerles, panel3,panel2);
+                        UserParamTabla.VezerloControl = VezerloControl;
+                        Vezerles.LetezoControlok[i] = VezerloControl;
+                        AktivControl = VezerloControl;
+                        break;
+                }
+            }
+            Ceginicializalas();
+            UserParamTabla.Close();
+        }
+        public override bool Ceginicializalas()
+        {
+            FakUserInterface.ProgressRefresh();
+            Base SaveAktivControl = AktivControl.AktivControl;
+            bool formvezvolt = SaveAktivControl != null && SaveAktivControl.Name == "Formvezerles" ||
+                UserParamTabla.UserParamok != "" && UserParamTabla.FormvezParam;
+            int ind = UserParamTabla.AktivCegIndex;
+            AktivCeginformaciok = UserParamTabla.AktivCegInformaciok;
+            Cegindex = AktivCeginformaciok[ind].Cegindex;
+            Ceginformaciok ceginfo = AktivCeginformaciok[ind];
+            KezeloiSzint = ceginfo.KezeloiSzint;
+            kezeloszerep.Text = SzovegesKezeloiSzint[(int)ceginfo.KezeloiSzint];
+            string conn = ceginfo.CegConnection;
+            string cegnev = ceginfo.CegNev;
+            DateTime aktdat = ceginfo.AktualisDatum;
+            if (aktdat.CompareTo(FakUserInterface.Mindatum) == 0)
+                aktdat = DateTime.Today;
+            FakUserInterface.Cegadatok(conn, cegnev, aktdat);
+            FakUserInterface.SetProgressText("");
+            szladat.MinDate = DateTimePicker.MinimumDateTime;
+            szladat.MaxDate = DateTimePicker.MaximumDateTime;
+            FakUserInterface.EventTilt = true;
+            szladat.Value = UserParamTabla.SzamlaDatumtol;//.AktualisDatum;
+            FakUserInterface.EventTilt = false;
+            szladat.MinDate = UserParamTabla.InduloDatum;
+            szladat.MaxDate = UserParamTabla.AktualisDatumig;
+            string contnev = UserParamTabla.AktualControlNev;
+            UserParamTabla.Infotoltkell = true;
+            UserParamTabla.SetKozosAllapotok();
+            string tooltip = "N";
+            treeView1.Nodes.Clear();
+            for (int i = 0; i < Vezerles.LetezoControlok.Length; i++)
+            {
+                Base control = Vezerles.LetezoControlok[i];
+                if (control != null)
+                {
+                    FakUserInterface.ProgressRefresh();
+                    AktivPageIndex = i;
+                    control.Dock = DockStyle.Fill;
+                    control.TermCegPluszCegalattiTabinfok = UserParamTabla.TermCegPluszCegalattiTablainfok;
+                    ValtozasBeallit("CegValtozas");
+                    if (i == 0)
+                    {
+                        control.Ceginicializalas(Cegindex);
+                        SaveAktivControl = control.AktivControl;
+                        if (UserParamTabla.FormvezTreeViewShowNodeToolTip)
+                            tooltip = "I";
+                        if (UserParamTabla.UserParamok != "")
+                        {
+                            if (UserParamTabla.FormvezParam)
+                            {
+                                FormVezerles.Ceginicializalas(Cegindex, UserParamTabla.LezartCeg, KezeloiSzint, "Formvezerles", UserParamTabla.UserParamok);
+                                control.AktivControl = FormVezerles;
+                            }
+
+                        }
+                        else
+                        {
+                            string userparam = ",,,,,," + tooltip;
+                            DataTable dt = new DataTable();
+                            DataRow dr;
+                            Sqlinterface.Select(dt,FakUserInterface.Userconn,"USERLOG"," where ALKALMAZAS_ID = "+ FakUserInterface.AlkalmazasId+
+                                " AND KEZELO_ID = "+FakUserInterface.KezeloId.ToString(),"",true);
+                            if (dt.Rows.Count != 0)
+                            {
+                                dr = dt.Rows[0];
+                                string name = dr["USERCONTNEV"].ToString();
+                                if (name == "Formvezerles")
+                                    userparam = dr["USERPARAMOK"].ToString();
+
+                            }
+                            FormVezerles.Ceginicializalas(Cegindex, UserParamTabla.LezartCeg, KezeloiSzint, "Formvezerles",userparam);
+                            if (!formvezvolt)
+                                control.AktivControl = SaveAktivControl;
+                        }
+                    }
+                }
+            }
+            ValtozasTorol();
+            label3.Text = "Adatbeviteli hónap: (" + UserParamTabla.InduloDatumString.Substring(0, 7) + "-" + UserParamTabla.AktualisDatumString.Substring(0, 7) +")";
+            return true;
+        }
+
+        private void comboBox2_Leave(object sender, EventArgs e)
+        {
+            ((Control)sender).BackColor = FakUserInterface.InaktivControlBackColor;
+        }
+        private void comboBox2_Enter(object sender, EventArgs e)
+        {
+            ((Control)sender).BackColor = FakUserInterface.AktivInputBackColor;
+        }
+        private void comboBox2_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedIndex != Cegindex)
+            {
+                if (AktivControl.Userabortkerdes())
+                {
+                    comboBox2.SelectedIndex = Cegindex;
+                    return;
+                }
+                UserParamTabla.SetAktualCeginformacio(UserParamTabla.LezartCeg, comboBox2.SelectedIndex);
+                cegvaltas = true;
+                ValtozasBeallit("CegValtozas");
+                Ceginicializalas();
+                comboBox2.Text = comboBox2.Items[comboBox2.SelectedIndex].ToString();
+            }
+        }
+        public bool AktivLezartCegInicializalas(bool aktiv)
+        {
+            comboBox2.Items.Clear();
+            if (aktiv)
+            {
+                aktivcegekelnek = true;
+                aktivcegek.Enabled = false;
+                if (UserParamTabla.LezartCegInformaciok != null && UserParamTabla.LezartCegInformaciok.Length != 0)
+                    lezartcegek.Enabled = true;
+            }
+            else
+            {
+                aktivcegekelnek = false;
+                lezartcegek.Enabled = false;
+                if (UserParamTabla.AktivCegInformaciok != null && UserParamTabla.AktivCegInformaciok.Length != 0)
+                    aktivcegek.Enabled = true;
+            }
+            UserParamTabla.SetAktualCeginformacio(!aktiv, 0);
+            comboBox2.Items.AddRange(UserParamTabla.CegNevek);
+            comboBox2.SelectedIndex = 0;
+            return Ceginicializalas();
+        }
+        private void comboBox2_DropDownClosed(object sender, EventArgs e)
+        {
+            if (!cegvaltas)
+                SetFocus();
+            cegvaltas = false;
+        }
+
+        private void dateTimePicker_CloseUp(object sender, EventArgs e)
+        {
+            if (!FakUserInterface.EventTilt)
+            {
+                FakUserInterface.EventTilt = true;
+                DateTime ujdat = szladat.Value;
+                if (ujdat.Year != UserParamTabla.SzamlaDatumtol.Year || ujdat.Month != UserParamTabla.SzamlaDatumtol.Month ) //|| ujdat.Month != UserParamTabla.Datumig.Month)
+                {
+                    if (AktivControl.Userabortkerdes())
+                    {
+                        szladat.Value = UserParamTabla.SzamlaDatumtol;
+                        FakUserInterface.EventTilt = false;
+                        return;
+                    }
+                    else
+                    {
+                        string datumstring = FakUserInterface.DatumToString(ujdat);
+                        datumstring = datumstring.Substring(0, 8) + "01";
+                        ujdat = Convert.ToDateTime(datumstring);
+                        szladat.Value = ujdat;
+                        UserParamTabla.SzamlaDatumtol = ujdat;
+                        ValtozasBeallit("Datumvaltozas");
+                        UserParamTabla.Infotoltkell = true;
+                        FakUserInterface.Cegadatok(new DateTime[] { UserParamTabla.SzamlaDatumtol, UserParamTabla.SzamlaDatumig });
+                        UserParamTabla.SetKozosAllapotok();
+                        if (AktivControl.AktivControl != null && AktivControl.AktivControl.Name!="Formvezerles"&& !AktivControl.AktivControl.Listae && AktivControl.AktivControl.AktivDropDownItem.Enabled)
+                        {
+                            AktivControl.AktivControl.Visible = false;
+                            UserParamTabla.Infotolt();
+                            if (AktivControl.AktivControl != null && AktivControl.AktivControl.ValtozasLekerdez().Count != 0)
+                            {
+                                AktivControl.AktivControl.TabStop = false;
+                                AktivControl.AktivControl.TabStop = true;
+                            }
+                            AktivControl.AktivControl.Visible = true;
+                        }
+                    }
+                }
+                SetFocus();
+                FakUserInterface.EventTilt = false;
+            }
+        }
+        private void SetFocus()
+        {
+            if (VezerloControl.AktivControl != null && !VezerloControl.AktivControl.Listae)
+            {
+                if (VezerloControl.AktivControl.Parameterez != null)
+                {
+                    Parameterez = AktivControl.AktivControl.Parameterez;
+                    int savind = Parameterez.tabControl1.SelectedIndex;
+                    if (savind == -1)
+                        savind = 0;
+                    Parameterez.tabControl1.SelectedIndex = -1;
+                    Parameterez.tabControl1.SelectedIndex = savind;
+                }
+                else
+                    VezerloControl.AktivControl.Focus();
+            }
+        }
+        private void aktivcegek_Click(object sender, EventArgs e)
+        {
+            if (!aktivcegekelnek && UserParamTabla.AktivCegInformaciok != null && UserParamTabla.AktivCegInformaciok.Length != 0 && (Vezerles.AktivVezerles.AktivVezerles == null || Vezerles.AktivVezerles.AktivVezerles.Control == null || !Vezerles.AktivVezerles.AktivVezerles.Control.Userabortkerdes()))
+            {
+                UserParamTabla.AktivCegIndex = 0;
+                AktivLezartCegInicializalas(true);
+            }
+        }
+
+        private void lezartcegek_Click(object sender, EventArgs e)
+        {
+            if (aktivcegekelnek && UserParamTabla.LezartCegInformaciok != null && UserParamTabla.LezartCegInformaciok.Length != 0 && (Vezerles.AktivVezerles.AktivVezerles == null || Vezerles.AktivVezerles.AktivVezerles.Control == null || !Vezerles.AktivVezerles.AktivVezerles.Control.Userabortkerdes()))
+            {
+                UserParamTabla.AktivCegIndex = 0;
+                AktivLezartCegInicializalas(false);
+            }
+        }
+
+        private void treeView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void frissit_Click(object sender, EventArgs e)
+        {
+            ControlAlap cont = null;
+            bool focused = false;
+            if (AktivControl.AktivControl != null)
+            {
+                try
+                {
+                    cont = (ControlAlap)AktivControl.AktivControl;
+                }
+                catch
+                {
+                }
+                if (cont != null)
+                {
+                    MezoTag focusedtag = null;
+                    foreach (Controltipus conttip in cont.ControltipusCollection)
+                    {
+                        if (conttip.InputGroupBox != null && conttip.InputGroupBox.Enabled)
+                        {
+                            focusedtag = conttip.MezoControlInfo.Inputeleminfok[0];
+                            foreach (MezoTag tag in conttip.MezoControlInfo.Inputeleminfok)
+                            {
+                                if (tag.Control.Focused)
+                                {
+                                    focusedtag = tag;
+                                    focused = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (focused)
+                        {
+                            conttip.InputGroupBox.Enabled = false;
+                            conttip.InputGroupBox.Enabled = true;
+                            break;
+                        }
+                    }
+                    if (!focused)
+                    {
+                        focusedtag.Control.Focus();
+                        focusedtag.Control.Enabled = false;
+                        focusedtag.Control.Enabled = true;
+                    }
+                }
+                if (!AktivControl.Userabortkerdes())
+                {
+                    if (FakUserInterface.KellFrissit(true))
+                    {
+                        if (AktivControl.Name != "Formvezerles")
+                            ValtozasBeallit("Frissites");
+                        else
+                            AktivControl.AktivControl.UjTag = true;
+                        AktivControl.AktivControl.TabStop = false;
+                        AktivControl.AktivControl.TabStop = true;
+                    }
+                }
+            }
+
+            FakUserInterface.ValtoztatasDatuma = DateTime.Now;
+        }
+
+
+        private void zarasok_Click(object sender, EventArgs e)
+        {
+            if (AktivControl.AktivControl != null)
+            {
+                if (AktivControl.AktivControl.Name == "Formvezerles" && AktivControl.AktivControl.Userabortkerdes(AktivControl.AktivControl.AktivControl.Tabinfo) || AktivControl.AktivControl.Userabortkerdes())
+                    return;
+            }
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            switch (item.Name)
+            {
+                case "ujho":
+                    break;
+                case "evzaras":
+                    break;
+                case "zarasfelold":
+                    break;
+            }
+        }
+        private void hianyzok_Click(object sender, EventArgs e)
+        {
+            string szov = "";
+            if (UserParamTabla.KozosAllapotSzovegek.Count == 0)
+                szov = " Minden van, ami kell";
+            else
+            {
+                string[] allszovegek = (string[])UserParamTabla.KozosAllapotSzovegek.ToArray(typeof(string));
+                foreach (string egyszov in allszovegek)
+                {
+                    if (szov != "")
+                        szov += "\n";
+                    szov += egyszov;
+                }
+            }
+            FakPlusz.MessageBox.Show(szov,"Mi hiányzik?");
+        }
+
+        private void teszt_Click(object sender, EventArgs e)
+        {
+                if (Tesztlap == null)
+                    Tesztlap = new Tesztlap(FakUserInterface,panel2,teszt);
+                panel1.Enabled = false;
+                treeView1.Enabled = false;
+                teszt.Visible = false;
+                Tesztlap.ShowTesztlap();
+        }
+
+        private void teszt_VisibleChanged(object sender, EventArgs e)
+        {
+            if (teszt.Visible && !treeView1.Enabled)
+            {
+                treeView1.Enabled = true;
+                panel1.Enabled = true;
+            }
+        }
+    }
+    public static class UserParamTabla
+    {
+        public static bool Elso = true;
+        public static Bejelentkezo Bejelentkezo = null;
+        public static FakUserInterface FakUserInterface = null;
+        public static MainControl MainControl;
+        public static VezerloControl VezerloControl;
+        public static bool LezartCeg = false;
+        public static bool Infotoltkell = true;
+        public static bool Infotoltvolt = false;
+        public static Ceginformaciok[] AktivCegInformaciok = null;
+        public static Ceginformaciok[] LezartCegInformaciok = null;
+        public static Ceginformaciok[] AktualCegInformaciok = null;
+        public static Ceginformaciok AktualCegInformacio = null;
+        public static string[] CegNevek = null;
+        public static int AktivCegIndex = 0;
+        public static string KezeloId = "";
+        public static Base.KezSzint AktualKezeloiSzint = Base.KezSzint.Minden;
+        public static Base.HozferJogosultsag CegSzarmazekosJogosultsag = Base.HozferJogosultsag.Semmi;
+        public static Base.HozferJogosultsag CegTermeszetesJogosultsag = Base.HozferJogosultsag.Semmi;
+        public static Base.HozferJogosultsag AktualTermeszetesJogosultsag = Base.HozferJogosultsag.Semmi;
+        public static Base.HozferJogosultsag UserHozferJogosultsag = Base.HozferJogosultsag.Semmi;
+        private static DateTime indulodatum = DateTime.MinValue;
+        public static string InduloDatumString = "";
+        public static string[] Allapotszamitasok = null;
+        public static ArrayList UserAllapotNevek = new ArrayList();
+        public static string[] VizsgalandoTablanevek = null;
+        public static string[] KozosAllapotszamitasok = null;
+        public static ArrayList KozosAllapotNevek = new ArrayList();
+        public static string[] KozosVizsgalandoTablanevek = null;
+        public static ArrayList KozosAllapotSzovegek = new ArrayList();
+        public static bool EgyetlenCegkezelo = false;
+        public static bool NincsCegkezelo = false;
+        public static DateTime InduloDatum
+        {
+            get { return indulodatum; }
+            set
+            {
+                indulodatum = value;
+                InduloDatumString = FakUserInterface.DatumToString(value);
+            }
+        }
+        private static DateTime aktualisdatum = DateTime.MinValue;
+        public static string AktualisDatumString = "";
+        public static DateTime AktualisDatum
+        {
+            get { return aktualisdatum; }
+            set
+            {
+                aktualisdatum = value;
+                AktualisDatumString = FakUserInterface.DatumToString(value);
+                aktualisdatumig = aktualisdatum.AddMonths(1).AddDays(-1);
+            }
+        }
+        private static DateTime aktualisdatumig = DateTime.MaxValue;
+        public static string aktualisdatumigstring = "";
+        public static DateTime AktualisDatumig
+        {
+            get { return aktualisdatumig; }
+        }
+        private static string datumtolstring;
+        public static string DatumtolString
+        {
+            get { return datumtolstring; }
+        }
+        private static DateTime datumtol = DateTimePicker.MinimumDateTime;
+        public static DateTime Datumtol
+        {
+            get { return datumtol; }
+            set
+            {
+                datumtol = value;
+                datumtolstring = FakUserInterface.DatumToString(value);
+            }
+        }
+        private static string datumigstring;
+        public static string DatumigString
+        {
+            get { return datumigstring; }
+        }
+        private static DateTime datumig = DateTimePicker.MaximumDateTime;
+        public static DateTime Datumig
+        {
+            get { return datumig; }
+            set
+            {
+                datumig = value;
+                datumigstring = FakUserInterface.DatumToString(value);
+            }
+        }
+        private static DateTime szamladatumtol;
+        public static DateTime SzamlaDatumtol
+        {
+            get { return szamladatumtol; }
+            set
+            {
+                szamladatumtol = value;
+                szamladatumtolstring = FakUserInterface.DatumToString(szamladatumtol);
+                szamladatumig = szamladatumtol.AddMonths(1).AddDays(-1);
+                szamladatumigstring = FakUserInterface.DatumToString(szamladatumig);
+            }
+        }
+        private static string szamladatumtolstring;
+        public static string SzamlaDatumtolString
+        {
+            get { return szamladatumtolstring; }
+        }
+
+        private static DateTime szamladatumig;
+        public static DateTime SzamlaDatumig
+        {
+            get
+            {
+                return szamladatumig;
+            }
+        }
+        private static string szamladatumigstring;
+        public static string SzamlaDatumigString
+        {
+            get { return szamladatumigstring; }
+        }
+
+        public static bool FormvezTreeViewShowNodeToolTip = false;
+        public static string UserParamok = "";
+        public static string AktualVezerloControlNev = "";
+        public static string IgaziVezerloControlNev = "";
+        public static int AktualPageindex = 0;
+        public static string AktualControlNev = "";
+        public static Base.Parameterezes Paramfajta = Base.Parameterezes.Nincsparameterezes;
+        public static int ValasztekIndex = 0;
+        public static int AktualMenuItemIndex = 0;
+        public static int AktualDropItemIndex = 1;
+        public static string[] ListaParamok = null;
+        public static int RadioButtonIndex = 0;
+        public static string[] OsszetettKozepsoParamok = null;
+        public static string[] OsszetettAlsoParamok = null;
+        public static string OsszetettKozepsoNev = "";
+        public static string[] SzurtIdk = null;
+        public static TablainfoTag TablainfoTag = null;
+        public static string Szint = "";
+        public static bool FormvezParam = false;
+        private static UsRutinok Usrutinok = null;
+        public static bool[] Allapotok = null;
+        public static TablainfoCollection TermCegPluszCegalattiTablainfok = new TablainfoCollection();
+        public static Tablainfo  Cegevinfo = null;
+        public static Tablainfo Ceghonapinfo = null;
+        public static string Ceghonap_Id = null;
+        public static Tablainfo Cegszerzodesinfo = null;
+        public static ArrayList OsszesEv = new ArrayList();
+        public static ArrayList NemLezartEvek = new ArrayList();
+        public static ArrayList LezartEvek = new ArrayList();
+        public static ArrayList TermTablaNevek = new ArrayList();
+        public static bool EgyFolyoszamla = false;
+        public static bool EgyPenztar = false;
+        public static bool KellZaras = false;
+        public static void Open(Bejelentkezo bejel, MainControl cont)
+        {
+            MainControl = cont;
+            if (Usrutinok == null)
+                Usrutinok = new UsRutinok();
+            Usrutinok.Open(bejel);
+        }
+        public static void Close()
+        {
+            UserParamok = "";
+        }
+        public static void SetAktualCeginformacio(bool lezart, int cegindex)
+        {
+            Usrutinok.SetAktualCeginformacio(lezart, cegindex);
+        }
+        public static void SetKozosAllapotok()
+        {
+            Usrutinok.SetKozosAllapotok();
+        }
+        public static void Infotolt()
+        {
+            Usrutinok.Infotolt();
+        }
+        public static void Infotolt(string id)
+        {
+            Usrutinok.Infotolt(id);
+        }
+        private class UsRutinok
+        {
+            public void SetKozosAllapotok()
+            {
+                KozosAllapotSzovegek.Clear();
+                for (int i = 0; i < KozosAllapotNevek.Count; i++)
+                {
+                    string allapotnev = KozosAllapotNevek[i].ToString();
+                    string tablanev = KozosVizsgalandoTablanevek[i];
+                    string szamitas = KozosAllapotszamitasok[i];
+                    Tablainfo info;
+                    switch (szamitas)
+                    {
+                        case "VANKEZELO":
+                            info = FakUserInterface.GetByAzontip("SZUTKEZELOK");
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "VANRENDSZERGAZDA":
+                            info = FakUserInterface.GetByAzontip("SZUTRENDSZERGAZDA");
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            else if (KozosAllapotSzovegek.Count == 0)
+                            {
+                                info = FakUserInterface.GetByAzontip("SZUOKezeloAlkalm");
+                                if (info.DataView.Count == 0)
+                                    KozosAllapotSzovegek.Add(" Az alkalmazáshoz nincs kijelölt kezelö");
+                                else
+                                {
+                                    if (info.DataView.Count == 1)
+                                        EgyetlenCegkezelo = true;
+                                    else
+                                        EgyetlenCegkezelo = false;
+                                }
+                            }
+                            break;
+                        case "BANKOK":
+                            info = FakUserInterface.GetBySzintPluszTablanev("U", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+
+                        case "Termfocsop":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "Termalcsop":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "Termcsop":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "TERMEKKOD":
+                            info = FakUserInterface.GetBySzintPluszTablanev("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+
+                        case "Koltsfocsop":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "Koltsalcsop":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "KOLTSEGCSOPORT":
+                            info = FakUserInterface.GetBySzintPluszTablanev("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "KOLTSEGKOD":
+                            info = FakUserInterface.GetBySzintPluszTablanev("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "Afa":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "FOLYOSZAMLAK":
+                            info = FakUserInterface.GetBySzintPluszTablanev("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            else
+                            {
+                                EgyFolyoszamla = info.DataView.Count == 1;
+                                VezerloControl.folyoszlafolyoszla.Enabled = !EgyFolyoszamla;
+                            }
+                            break;
+                        case "Penztarak":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            else
+                            {
+                                EgyPenztar = info.DataView.Count == 1;
+                                VezerloControl.penztarpenztar.Enabled = !EgyPenztar;
+                            }
+                            break;
+                        case "Fszazal":
+                            info = FakUserInterface.GetKodtab("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                        case "PARTNER":
+                            info = FakUserInterface.GetBySzintPluszTablanev("C", szamitas);
+                            if (info.DataView.Count == 0)
+                                KozosAllapotSzovegek.Add("Nincs " + allapotnev);
+                            break;
+                    }
+                }
+                Tablainfo tabinfo = FakUserInterface.GetByAzontip("SZCOTARTAL");
+                for (int i = 0; i < tabinfo.Adattabla.Rows.Count; i++)
+                {
+                    DataRow dt = tabinfo.Adattabla.Rows[i];
+                    string kodtip = dt["KODTIPUS"].ToString();
+                    Tablainfo egyinfo = FakUserInterface.GetOsszef("C", kodtip);
+                    if (egyinfo.Adattabla.Rows.Count == 0)
+                        KozosAllapotSzovegek.Add("Nincs a " + dt["SZOVEG"].ToString() + " kitöltve!");
+                }
+                if (KozosAllapotSzovegek.Count == 0)
+                    MainControl.hianyzok.Visible = false;
+                else
+                    MainControl.hianyzok.Visible = true;
+                MainControl.teszt.Visible = !MainControl.hianyzok.Visible;
+                bool lathato = KozosAllapotSzovegek.Count == 0 && CegTermeszetesJogosultsag != Base.HozferJogosultsag.Semmi;
+                VezerloControl.menuStrip1.Visible = lathato;
+                if (lathato)
+                {
+                    SetEgyediAllapotok();
+                    VezerloControl.MenuBeallitasok();
+                }
+            }
+            private void SetEgyediAllapotok()
+            {
+                for (int i = 0; i < Allapotok.Length; i++)
+                {
+                    string tablanev = UserParamTabla.VizsgalandoTablanevek[i];
+                    string szamitas = UserParamTabla.Allapotszamitasok[i];
+                    bool van = false;
+                    DataTable dt = new DataTable();
+                    switch (szamitas)
+                    {
+
+                        case "TOBBFOLYO":
+                            if (!EgyFolyoszamla)
+                                van = true;
+                            break;
+                        case "TOBBPENZTAR":
+                            if (!EgyPenztar)
+                                van = true;
+                            break;
+                        case "BEVKIEGYENL":
+                            dt.Rows.Clear();
+                            Sqlinterface.Select(dt, FakUserInterface.AktualCegconn, "BEVSZLA", " where FIZETVE ='N'", "", true);
+                            van = dt.Rows.Count != 0;
+                            break;
+                        case "KOLTSKIEGYENL":
+                            dt.Rows.Clear();
+                            Sqlinterface.Select(dt, FakUserInterface.AktualCegconn, "KOLTSSZLA", " where FIZETVE ='N'", "", true);
+                            van = dt.Rows.Count != 0;
+                            break;
+                        case "EVZAR":
+                            //van = !AktualCegInformacio.LezartEv;
+                            //if (!van)
+                            //    break;
+                            if (NemLezartEvek.Count == 0)
+                                break;
+                            if (NemLezartEvek[0].ToString() == OsszesEv[OsszesEv.Count - 1].ToString())
+                                break;
+                            string tol = NemLezartEvek[0].ToString() + ".01.01";
+                            string ig = NemLezartEvek[0].ToString() + ".12.31";
+                            string sel = " where FIZETVE ='N' AND SZLA_DATUM>='" + tol + "' AND SZLA_DATUM <= '" + ig + "'";
+                            dt.Rows.Clear();
+                            Sqlinterface.Select(dt, FakUserInterface.AktualCegconn, "BEVSZLA", sel, "", true);
+                            van = dt.Rows.Count == 0;
+                            if (!van)
+                                break;
+                            Sqlinterface.Select(dt, FakUserInterface.AktualCegconn, "KOLTSSZLA", sel, "", true);
+                            van = dt.Rows.Count == 0;
+                            break;
+                        case "EVNYIT":
+                            van = LezartEvek.Count!=0;
+                            break;
+                    }
+                    Allapotok[i] = van;
+                }
+            }
+
+            private void Kezeloszereprendberak(Tablainfo szerepinfo)
+            {
+                Tablainfo kezalkalm = FakUserInterface.GetOsszef("U", "KezeloAlkalm");
+                string[] idk = FakUserInterface.GetTartal(kezalkalm, "SORSZAM1");
+                if (idk.Length > 1)
+                {
+                    string savfilt = szerepinfo.DataView.RowFilter;
+                    for (int i = 0; i < idk.Length; i++)
+                    {
+                        szerepinfo.DataView.RowFilter = "KEZELO_ID = " + idk[i];
+                        bool van = szerepinfo.DataView.Count != 0;
+                        szerepinfo.DataView.RowFilter = "";
+                        if (!van)
+                        {
+                            DataRow row = szerepinfo.Ujsor();
+                            row["CEG_ID"] = FakUserInterface.AktualCegid;
+                            row["ALKALMAZAS_ID"] = FakUserInterface.AlkalmazasId;
+                            row["KEZELO_ID"] = idk[i];
+                            row["SZEREPKOD"] = "10";
+                        }
+                        szerepinfo.DataView.RowFilter = savfilt;
+                        if (szerepinfo.Modositott)
+                            FakUserInterface.Rogzit(szerepinfo);
+                    }
+                }
+            }
+            public void Open(Bejelentkezo bejel)
+            {
+                Bejelentkezo = bejel;
+                KezeloId = bejel.Kezeloid;
+                FakUserInterface = bejel.FakUserInterface;
+                Cegszerzodesinfo = FakUserInterface.GetByAzontip("SZCTCEGSZERZODES");
+                Tablainfo tablanevek = FakUserInterface.GetByAzontip("SZRTTABLANEVEK");
+                TermTablaNevek = new ArrayList(FakUserInterface.GetTartal(tablanevek, "SZOVEG"));
+                Tablainfo userallapotok = FakUserInterface.GetByAzontip("SZRTUSERALLAPOTOK");
+                Allapotok = new bool[userallapotok.DataView.Count];
+                string[] userallapotnevek = FakUserInterface.GetTartal(userallapotok, "SZOVEG");
+                UserAllapotNevek = new ArrayList(userallapotnevek);
+                Allapotszamitasok = FakUserInterface.GetTartal(userallapotok, "SZAMITAS");
+                VizsgalandoTablanevek = FakUserInterface.GetTartal(userallapotok, "TABLANEV");
+                Tablainfo kozosallapotok = FakUserInterface.GetByAzontip("SZRTKOZOSUSERALLAPOTOK");
+                userallapotnevek = FakUserInterface.GetTartal(kozosallapotok, "SZOVEG");
+                KozosAllapotNevek = new ArrayList(userallapotnevek);
+                KozosAllapotszamitasok = FakUserInterface.GetTartal(kozosallapotok, "SZAMITAS");
+                KozosVizsgalandoTablanevek = FakUserInterface.GetTartal(kozosallapotok, "TABLANEV");
+                AktivCegInformaciok = Bejelentkezo.CegInformaciok;
+                LezartCegInformaciok = Bejelentkezo.LezartCegInformaciok;
+                LezartCeg = Bejelentkezo.LezartCeg;
+                if (LezartCeg)
+                    AktualCegInformaciok = LezartCegInformaciok;
+                else
+                    AktualCegInformaciok = AktivCegInformaciok;
+                ArrayList ar = new ArrayList(AktualCegInformaciok);
+                SetAktualCeginformacio(LezartCeg, ar.IndexOf(bejel.AktivCegInformacio));
+                UserParamok = bejel.UserParamok;
+                SzamlaDatumtol = AktualisDatum;
+                Datumtol = AktualisDatum;
+                Datumig = AktualisDatumig;
+                if (UserParamok != "")
+                {
+                    AktualVezerloControlNev = bejel.UserContnev;
+                    IgaziVezerloControlNev = bejel.UserContnev;
+                    Paramfajta = (Base.Parameterezes)bejel.Parametertipus;
+                    char[] vesszo = new char[] { Convert.ToChar(",") };
+                    string[] split = UserParamok.Split(vesszo);
+                    AktualControlNev = split[0];
+                    if (AktualVezerloControlNev == "Formvezerles")
+                    {
+                        FormvezParam = true;
+                        string azontip = split[3];
+                        Szint = azontip.Substring(2, 1);
+                        if (AktualControlNev != "")
+                        {
+                            TablainfoTag = bejel.FakUserInterface.GetByAzontip(azontip).Azonositok.Tablatag;
+                            AktualMenuItemIndex = Convert.ToInt16(split[4]);
+                            AktualDropItemIndex = Convert.ToInt16(split[5]);
+                        }
+                    }
+                    else
+                    {
+                        AktualMenuItemIndex = Convert.ToInt32(split[1]);
+                        AktualDropItemIndex = Convert.ToInt32(split[2]);
+                        int nyito = UserParamok.IndexOf("{");
+                        int zaro = UserParamok.IndexOf("}");
+                        string osztando = UserParamok.Substring(nyito + 1, zaro - nyito - 1);
+                        split = osztando.Split(vesszo);
+                        if (Paramfajta == Base.Parameterezes.Nincsparameterezes)
+                        {
+                            SzamlaDatumtol = Convert.ToDateTime(split[0]);
+                            return;
+                        }
+                        string paramstring = Paramfajta.ToString();
+                        if (Paramfajta == Base.Parameterezes.Listaparamok)
+                        {
+                            return;
+                        }
+                        if (paramstring.Contains("Datum"))
+                        {
+                            Datumtol = Convert.ToDateTime(split[0]);
+                            Datumig = Convert.ToDateTime(split[1]);
+                            if (paramstring.Contains("valasztek"))
+                            {
+                                ValasztekIndex = Convert.ToInt32(split[2]);
+                                return;
+                            }
+                        }
+                        nyito = UserParamok.IndexOf("/");
+                        if (nyito != -1)
+                        {
+                            zaro = UserParamok.IndexOf("/", nyito + 1);
+                            if (zaro != -1)
+                            {
+                                osztando = UserParamok.Substring(nyito + 1, zaro - nyito - 1);
+                                split = osztando.Split(vesszo);
+                                SzurtIdk = new string[split.Length];
+                                for (int i = 0; i < split.Length; i++)
+                                    SzurtIdk[i] = split[i];
+                            }
+                        }
+                        if (paramstring.Contains("Osszetett"))
+                        {
+                            nyito = UserParamok.IndexOf("[");
+                            if (nyito != -1)
+                            {
+                                zaro = UserParamok.IndexOf("]");
+                                if (zaro != -1)
+                                {
+                                    osztando = UserParamok.Substring(nyito + 1, zaro - nyito - 1);
+                                    split = osztando.Split(vesszo);
+                                    RadioButtonIndex = Convert.ToInt16(split[0]);
+                                    if (split.Length != 1)
+                                    {
+                                        OsszetettKozepsoParamok = new string[split.Length - 1];
+                                        for (int i = 1; i <= OsszetettKozepsoParamok.Length; i++)
+                                            OsszetettKozepsoParamok[i - 1] = split[i];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            public void Infotolt(string ceghonapid)
+            {
+                if (Infotoltkell)
+                {
+                    Ceghonapinfo.Adattabla.Select();
+                    Ceghonapinfo.Tartalmaktolt();
+                    Ceghonapinfo.DataView.RowFilter = "CEGHONAP_ID = " + ceghonapid;
+                    Ceghonapinfo.ViewSorindex = 0;
+                    Ceghonapinfo.DataView.RowFilter = "";
+                    FakUserInterface.OsszesAdattoltByParent("CEGSZLAHONAPOK");
+                    Infotoltkell = false;
+                }
+            }
+            public void Infotolt()
+            {
+                if (Infotoltkell)
+                {
+                    Infotoltkell = false;
+                    if (CegTermeszetesJogosultsag != Base.HozferJogosultsag.Semmi)
+                    {
+                        Ceghonapinfo.Adattabla.Select();
+                        Ceghonapinfo.Tartalmaktolt();
+                        Ceghonapinfo.DataView.RowFilter = "SZLA_DATUM >='" + SzamlaDatumtolString + "' AND SZLA_DATUM<='" + SzamlaDatumigString + "'";
+                        Ceghonapinfo.ViewSorindex = Ceghonapinfo.DataView.Count - 1;
+                        Ceghonap_Id = Ceghonapinfo.AktIdentity.ToString();
+                        if (Ceghonap_Id == "-1")
+                        {
+                        }
+                        else
+                            FakUserInterface.OsszesAdattoltByParent("CEGSZLAHONAPOK");
+                        DateTime dat = Convert.ToDateTime(Ceghonapinfo.AktualViewRow["SZLA_DATUM"].ToString());
+                        Ceghonapinfo.DataView.RowFilter = "";
+                        AktualTermeszetesJogosultsag = CegTermeszetesJogosultsag;
+                        string aktev = SzamlaDatumtolString.Substring(0, 4);
+                        if (LezartEvek.IndexOf(aktev) != -1)
+                            AktualTermeszetesJogosultsag = Base.HozferJogosultsag.Csakolvas;
+                    }
+                }
+            }
+            public void SetAktualCeginformacio(bool lezart, int cegindex)
+            {
+                LezartCeg = lezart;
+                if (LezartCeg)
+                    AktualCegInformaciok = LezartCegInformaciok;
+                else
+                    AktualCegInformaciok = AktivCegInformaciok;
+                AktualCegInformacio = AktualCegInformaciok[cegindex];
+                AktivCegIndex = cegindex;
+                ArrayList cegnevek = new ArrayList();
+                foreach (Ceginformaciok egyinf in AktivCegInformaciok)
+                    cegnevek.Add(egyinf.CegNev);
+                CegNevek = (string[])cegnevek.ToArray(typeof(string));
+                InduloDatum = AktualCegInformacio.InduloDatum;
+                AktualisDatum = AktualCegInformacio.AktualisDatum;
+  //              Datumtol = InduloDatum;
+  //              Datumig = AktualisDatumig;
+                SzamlaDatumtol = AktualisDatum;
+                FakUserInterface.Cegadatok(AktualCegInformacio.CegConnection, CegNevek[cegindex], new DateTime[] { AktualisDatum, AktualisDatumig });
+                AktualKezeloiSzint = AktualCegInformacio.KezeloiSzint;
+                TermCegPluszCegalattiTablainfok = FakUserInterface.GetCegPluszCegalattiTermTablaInfok();
+                Cegevinfo = TermCegPluszCegalattiTablainfok["CEGEV"];
+                Cegevinfo.Adattabla.Select();
+                OsszesEv.Clear();
+                NemLezartEvek.Clear();
+                LezartEvek.Clear();
+                KellZaras = false;
+                for (int i = 0; i < Cegevinfo.DataView.Count; i++)
+                {
+                    DataRow dr = Cegevinfo.DataView[i].Row;
+                    OsszesEv.Add(dr["EV"]);
+                    if (dr["LEZART"].ToString() == "I")
+                        LezartEvek.Add(dr["EV"]);
+                    else
+                    {
+                        NemLezartEvek.Add(dr["EV"]);
+                        if (dr["KELLZARAS"].ToString() == "I")
+                            KellZaras = true;
+                    }
+                }
+                Ceghonapinfo = TermCegPluszCegalattiTablainfok["CEGSZLAHONAPOK"];
+                Ceghonapinfo.SelectString = "";
+                Ceghonapinfo.Adattabla.Select();
+                Ceghonapinfo.ViewSorindex = 0;
+                Ceghonap_Id = Ceghonapinfo.AktIdentity.ToString();
+                if (!Elso && VezerloControl.AktivControl !=null)
+                {
+                    FakUserInterface.EventTilt = true;
+                    if ((UserHozferJogosultsag != Base.HozferJogosultsag.Semmi || CegSzarmazekosJogosultsag != Base.HozferJogosultsag.Semmi)
+                        && AktualCegInformacio.UserJogosultsag == Base.HozferJogosultsag.Semmi && AktualCegInformacio.CegSzarmazekosJogosultsag ==
+                        Base.HozferJogosultsag.Semmi && VezerloControl.AktivControl.Name == "Formvezerles")
+                            VezerloControl.Controls[0].Controls.Clear();
+                    if (CegTermeszetesJogosultsag != Base.HozferJogosultsag.Semmi && AktualCegInformacio.CegTermeszetesJogosultsag ==
+                        Base.HozferJogosultsag.Semmi && VezerloControl.AktivControl != null && VezerloControl.AktivControl.Name!="Formvezerles")
+                        VezerloControl.Controls[0].Controls.Clear();
+                    FakUserInterface.EventTilt = false;
+                }
+                Elso = false;
+                UserHozferJogosultsag = AktualCegInformacio.UserJogosultsag;
+                CegSzarmazekosJogosultsag= AktualCegInformacio.CegSzarmazekosJogosultsag;
+                CegTermeszetesJogosultsag= AktualCegInformacio.CegTermeszetesJogosultsag;
+                AktualTermeszetesJogosultsag = CegTermeszetesJogosultsag;
+            }
+        }
+    }
+}

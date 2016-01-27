@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FormattedTextBox</name>
+    </assembly>
+    <members>
+        <member name="T:FormattedTextBox.FormattedTextBox">
+            <summary>
+            Formattalt Text Box
+            </summary>
+        </member>
+        <member name="F:FormattedTextBox.FormattedTextBox._format">
+            <summary>
+            alapertelmezesben nincs formatum
+            </summary>
+        </member>
+        <member name="M:FormattedTextBox.FormattedTextBox.#ctor">
+            <summary>
+            Object letrehozasa
+            </summary>
+        </member>
+        <member name="M:FormattedTextBox.FormattedTextBox.OnEnter(System.EventArgs)">
+            <summary>
+            Enter eseten szurje ki a formatumkaraktereket
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:FormattedTextBox.FormattedTextBox.OnLeave(System.EventArgs)">
+            <summary>
+            Leave eseten tegye be a formatumkaraktereket
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:FormattedTextBox.FormattedTextBox.FormInit">
+            <summary>
+            format tartalma alapjan a form-ot es a
+            formatok tombjet tolti
+            </summary>
+        </member>
+        <member name="M:FormattedTextBox.FormattedTextBox.RemoveFormatCharacters">
+            <summary>
+            Formatumkarakterek eltavolitasa
+            </summary>
+        </member>
+        <member name="M:FormattedTextBox.FormattedTextBox.InsertFormatCharacters">
+            <summary>
+            Formatumkarakterek insertalasa
+            </summary>
+        </member>
+        <member name="P:FormattedTextBox.FormattedTextBox.Form">
+            <summary>
+            Property Window-ban is megadhato formatum
+            </summary>
+        </member>
+        <member name="P:FormattedTextBox.FormattedTextBox.Format">
+            <summary>
+            A formatum. Set eseten hivja a FormInit()-et
+            </summary>
+        </member>
+        <member name="T:FormattedTextBox.FormattedTextBox.formnum">
+            <summary>
+            Formatumok enum-ja
+            </summary>
+        </member>
+        <member name="F:FormattedTextBox.FormattedTextBox.formnum.None">
+            <summary>
+            nincs formatum
+            </summary>
+        </member>
+        <member name="F:FormattedTextBox.FormattedTextBox.formnum.N0">
+            <summary>
+            Numerikus, nincs tizedes
+            </summary>
+        </member>
+        <member name="F:FormattedTextBox.FormattedTextBox.formnum.N2">
+            <summary>
+            Numerikus, ket tizedes
+            </summary>
+        </member>
+        <member name="F:FormattedTextBox.FormattedTextBox.formnum.Custom">
+            <summary>
+            karakteres formatum, felhasznalo allitja be
+            </summary>
+        </member>
+    </members>
+</doc>

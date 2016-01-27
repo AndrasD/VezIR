@@ -1,0 +1,3 @@
+[Data Source=GITTA\SQLSERVER;Initial Catalog=rendszer;Integrated Security=True],
+[Data Source=GITTA\SQLSERVER;Initial Catalog=user;Integrated Security=True],
+[Data Source=GITTA\SQLSERVER;Initial Catalog=alkalm;Integrated Security=True]

@@ -1,0 +1,4 @@
+[Data Source=localhost\SQLSERVER;Initial Catalog=webalaprendszer;Integrated Security=True],
+[Data Source=localhost\SQLSERVER;Initial Catalog=webalapuser;Integrated Security=True],
+[Data Source=localhost\SQLSERVER;Initial Catalog=webalapalkalm;Integrated Security=True]
+

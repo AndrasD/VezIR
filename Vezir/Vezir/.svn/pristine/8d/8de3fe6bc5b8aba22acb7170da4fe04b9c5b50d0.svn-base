@@ -1,0 +1,50 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir
+{
+    public partial class Tesztlap : Base
+    {
+        FakUserInterface Fak;
+        Panel Panel;
+        Control[] controlok;
+        ToolStripMenuItem Teszt;
+        public Tesztlap()
+        {
+            InitializeComponent();
+        }
+        public void ShowTesztlap(FakUserInterface fak, Panel panel,ToolStripMenuItem teszt)
+        {
+            Fak = fak;
+            Panel = panel;
+            Teszt = teszt;
+            controlok=new Control[panel.Controls.Count];
+            for(int i=0;i<panel.Controls.Count;i++)
+                controlok[i]=panel.Controls[i];
+            panel.Controls.Clear();
+            this.Dock = DockStyle.Fill;
+            panel.Controls.Add(this);
+        }
+
+        public override void ok_Click(object sender, EventArgs e)
+        {
+            Panel.Controls.Clear();
+            for(int i=0;i<controlok.Length;i++)
+                Panel.Controls.Add(controlok[i]);
+            Teszt.Visible = true;
+        }
+    }
+}

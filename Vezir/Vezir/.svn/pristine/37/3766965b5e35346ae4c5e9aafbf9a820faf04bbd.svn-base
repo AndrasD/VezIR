@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir.ENYEM.Main
+{
+    public partial class Tesztlap : Form
+    {
+        private FakUserInterface FakUserInterface;
+        public Tesztlap()
+        {
+            InitializeComponent();
+        }
+        public void ShowTesztlap(FakUserInterface fak)
+        {
+            treeView1.Nodes.Clear();
+            treeView2.Nodes.Clear();
+            Tablainfo termfocsop = fak.GetKodtab("C", "Termfocsop");
+            Tablainfo termalcsop = fak.GetKodtab("C", "Termalcsop");
+            Tablainfo termcsop = fak.GetKodtab("C", "Termcsop");
+            Tablainfo termekkod = fak.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            Tablainfo koltsfocsop = fak.GetKodtab("C", "Koltsfocsop");
+            Tablainfo koltsalcsop = fak.GetKodtab("C", "Koltsalcsop");
+            Tablainfo koltcsop = fak.GetBySzintPluszTablanev ("C", "KOLTSEGCSOPORT");
+            Tablainfo koltsegkod = fak.GetBySzintPluszTablanev("C", "KOLTSEGKOD");
+            Tablainfo termfocsopalcsop = fak.GetOsszef("C", "Termfocsopalcsop");
+            Tablainfo termalcsopcsop = fak.GetOsszef("C", "Termalcsopcsop");
+            Tablainfo termcsoptermek = fak.GetOsszef("C", "Termcsopkod");
+            Tablainfo koltsfocsopalcsop = fak.GetOsszef("C", "Koltsfocsopalcsop");
+            Tablainfo koltsalcsopcsop = fak.GetOsszef("C", "Koltsalcsopcsop");
+            Tablainfo koltscsopkoltseg = fak.GetOsszef("C", "Koltscsopkod");
+            for (int i = 0; i < termfocsop.Adattabla.Rows.Count; i++)
+            {
+                DataRow focsoprow = termfocsop.Adattabla.Rows[i];
+                TreeNode focsopnode = new TreeNode(focsoprow["SZOVEG"].ToString());
+                treeView1.Nodes.Add(focsopnode);
+                string[] alcsopidk = fak.GetTartal(termfocsopalcsop, "SORSZAM2", "SORSZAM1", focsoprow["SORSZAM"].ToString());
+                if (alcsopidk != null)
+                {
+                    for (int ii = 0; ii < alcsopidk.Length; ii++)
+                    {
+                        string alcsopszov = fak.GetTartal(termalcsop, "SZOVEG", "SORSZAM", alcsopidk[ii])[0];
+                        TreeNode alcsopnode = new TreeNode(alcsopszov);
+                        focsopnode.Nodes.Add(alcsopnode);
+                        string[] csopidk = fak.GetTartal(termalcsopcsop, "SORSZAM2", "SORSZAM1", alcsopidk[ii]);
+                        if (csopidk != null)
+                        {
+                            for (int j = 0; j < csopidk.Length; j++)
+                            {
+                                string csopszov = fak.GetTartal(termcsop, "SZOVEG", "SORSZAM", csopidk[j])[0];
+                                TreeNode csopnode = new TreeNode(csopszov);
+                                alcsopnode.Nodes.Add(csopnode);
+                                string[] termekek = fak.GetTartal(termcsoptermek, "SORSZAM2", "SORSZAM1", csopidk[j]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Tesztlap_Leave(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

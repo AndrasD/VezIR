@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir
+{
+    public partial class UjPartnerUserControl : Gridpluszinput
+    {
+        private Form Parentform;
+        public UjPartnerUserControl()
+        {
+            InitializeComponent();
+            dataGridView1.Parent.Parent.Visible = false;
+            toolStrip2.Items.Remove(elozo);
+            toolStrip2.Items.Remove(kovetkezo);
+            elolrol.Text = "Vissza";
+            panel7.Visible = false;
+        }
+        public void Init(UjPartner parent, Vezerloinfo vezerles, Tablainfo partner)
+        {
+            Parentform = parent;
+            ParameterAtvetel(vezerles, false);
+            Hivo = Vezerles.AktivControl;
+            Hivo.AktivControl = this;
+            Vezerles = vezerles;
+            Tabinfo = partner;
+            TablainfoTag = partner.TablaTag;
+            Elsoeset = true;
+        }
+        public override void AltalanosInit()
+        {
+            UjTag = true;
+            if (Elsoeset)
+            {
+                base.AltalanosInit();
+                Hivo.Hivo.AltalanosInit();
+                Tabinfo.ViewSorindex = Tabinfo.DataView.Count - 1;
+                mogeszur_Click(mogeszur, new EventArgs());
+                Elsoeset = false;
+            }
+        }
+        public override void ok_Click(object sender, EventArgs e)
+        {
+            base.ok_Click(sender, e);
+            if (ok.ToolTipText == "")
+            {
+                base.rogzit_Click(sender, e);
+                Hivo.Hivo.RogzitesUtan();
+                Parentform.DialogResult = DialogResult.OK;
+                Parentform.Close();
+            }
+        }
+        public override void elolrol_Click(object sender, EventArgs e)
+        {
+            Parentform.DialogResult = DialogResult.Cancel;
+            Parentform.Close();
+        }
+        public override string EgyediHibavizsg(DataGridViewCell dcell, Tablainfo tabinfo)
+        {
+           return Hivo.Hivo.EgyediHibavizsg(dcell, tabinfo);
+        }
+    }
+}

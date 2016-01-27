@@ -1,0 +1,141 @@
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.Alapfunkciok;
+namespace FakPlusz.Formok
+{
+    /// <summary>
+    /// Termeszetes tablak mezoneveinek attekintesere szolgalo UserControl
+    /// </summary>
+    public partial class Mezonevek : Csakgrid
+    {
+        private bool valtnaplo = false;
+        private bool userlog = false;
+        /// <summary>
+        /// objectum letrehozasa
+        /// </summary>
+        /// <param name="vezerles">
+        /// vezerloinformacio
+        /// </param>
+        public Mezonevek(Vezerloinfo vezerles)
+        {
+            InitializeComponent();
+            ParameterAtvetel(vezerles, false);
+ //           HozferJog = HozferJogosultsag.Csakolvas;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void AltalanosInit()
+        {
+            base.AltalanosInit();
+            string LastSel = "";
+            valtnaplo = false;
+            userlog = false;
+            if (Tabinfo.Tablanev == "USERLOG")
+            {
+                userlog = true;
+                LastSel = Tabinfo.SelectString;
+            }
+            else if (Tabinfo.Tablanev == "VALTOZASNAPLO")
+            {
+                valtnaplo = true;
+                LastSel = " where ( KEZELO_ID IS NULL OR KEZELO_ID = " + FakUserInterface.KezeloId.ToString()+")";
+                if(!Tervezoe)
+                    LastSel += " and (ALKALM = '' OR ALKALM = '" + FakUserInterface.Alkalmazas + "')";
+                //char[] kettospont = new char[1];
+                //kettospont[0] = Convert.ToChar(":");
+                //string dat = DateTime.Today.AddDays(-1).ToShortDateString();
+                //string tim = DateTime.Today.AddDays(-1).ToString().Replace(dat, "");
+                //dat = dat.Replace(".", "-");
+                //if (dat.EndsWith("-"))
+                //    dat = dat.Substring(0, dat.Length - 1);
+                //string[] ido = tim.Split(kettospont);
+                //string hour = ido[0];
+                //string minute = ido[1];
+                //string second = ido[2];
+                //LastSel += " and LAST_MOD > { d '" + dat + "'}";
+                //LastSel += " and (DATENAME(hour,LAST_MOD)>" + hour + " or DATENAME(hour,LAST_MOD)=" + hour +
+                //    " and DATENAME(minute,LAST_MOD)>" + minute + " or DATENAME(hour,LAST_MOD)=" + hour + " and DATENAME(minute,LAST_MOD)=" + minute
+                //    + " and DATENAME(second,LAST_MOD)>" + second + ")";
+            }
+            if (valtnaplo || userlog)
+            {
+                Tabinfo.Adattabla.LastSel = LastSel;
+                FakUserInterface.ForceAdattolt(Tabinfo, true);
+                if (Tabinfo.DataView.Count == 0 || HozferJog != HozferJogosultsag.Irolvas)
+                    toolStrip1.Visible = false;
+                else
+                    toolStrip1.Visible = true;
+            }
+        }
+        /// <summary>
+        /// torol felulbiralasa
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void torolalap_Click(object sender, EventArgs e)
+        {
+            if (Tabinfo.Adattabla.Rows.Count!=0 && MessageBox.Show(FakUserInterface.GetUzenetSzoveg("Osszestorolheto"),"", MessageBox.MessageBoxButtons.IgenNem) ==
+                MessageBox.DialogResult.Igen)
+            {
+                //string savsel = Tabinfo.Adattabla.LastSel;
+                //object datasource = dataGridView1.DataSource;
+                //DataTable table = Tabinfo.DataView.Table;
+                //dataGridView1.DataSource = null;
+                //Tabinfo.DataView.Table = null;
+                string selstring = "";
+                if (valtnaplo || userlog)
+                {
+                    if (valtnaplo)
+                    {
+                        selstring = "delete from Valtozasnaplo";
+                        if (!Tervezoe)
+                            selstring += " where ALKALM = '' OR ALKALM = '" + FakUserInterface.Alkalmazas + "'";
+                        //                   Sqlinterface.Select(Tabinfo.Adattabla, Tabinfo.Adattabla.Connection, Tabinfo.Tablanev, selstring, "", false);
+                    }
+                    if (userlog)
+                    {
+                        selstring = "delete from Userlog";
+                        if (!Tervezoe)
+                            selstring += " where ALKALMAZAS_ID = " + FakUserInterface.AlkalmazasId;
+                    }
+
+                    Sqlinterface.SpecCommand(new DataTable(), Tabinfo.Adattabla.Connection, Tabinfo.Tablanev, selstring, "");
+                    toolStrip1.Visible = false;
+                    Tabinfo.Adattabla.Select();
+                }
+            }
+        }
+        /// <summary>
+        /// ures
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+        }
+        /// <summary>
+        /// ures
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+        }
+        /// <summary>
+        /// ures
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public override void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+        }
+    }
+}

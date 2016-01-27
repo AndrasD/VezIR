@@ -1,0 +1,31 @@
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.exe
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\Tervezo.exe
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\Tervezo.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\FakPlusz.dll
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\FormattedTextBox.dll
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\FakPlusz.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\FormattedTextBox.pdb
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\FormattedTextBox.xml
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.Main.resources
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.Properties.Resources.resources
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.TervControl.resources
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\Tervezo.exe
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\Tervezo.pdb
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\Tervezo.exe
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\Tervezo.pdb
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\FakPlusz.dll
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\FormattedTextBox.dll
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\FakPlusz.pdb
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\FakPlusz.xml
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\FormattedTextBox.pdb
+G:\VEZIR\Solutions\Tervezo\Tervezo\bin\Debug\FormattedTextBox.xml
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\ResolveAssemblyReference.cache
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\Tervezo.Main.resources
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\Tervezo.Properties.Resources.resources
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\Tervezo.TervControl.resources
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\GenerateResource-ResGen.read.1.tlog
+G:\VEZIR\Solutions\Tervezo\Tervezo\obj\Debug\GenerateResource-ResGen.write.1.tlog
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\bin\Debug\Tervezo.exe.config
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.csprojResolveAssemblyReference.cache
+C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Tervezo\Tervezo\obj\Debug\Tervezo.csproj.GenerateResource.Cache

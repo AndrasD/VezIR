@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir.ENYEM.Main
+{
+    public partial class Tesztlap : Form
+    {
+        private FakUserInterface FakUserInterface;
+        public Tesztlap()
+        {
+            InitializeComponent();
+        }
+        public void ShowTesztlap(FakUserInterface fak)
+        {
+            treeView1.Nodes.Clear();
+            treeView2.Nodes.Clear();
+            Tablainfo termfocsop = fak.GetKodtab("C", "Termfocsop");
+            Tablainfo termalcsop = fak.GetKodtab("C", "Termalcsop");
+            Tablainfo termcsop = fak.GetKodtab("C", "Termcsop");
+            Tablainfo termekkod = fak.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            Tablainfo koltsfocsop = fak.GetKodtab("C", "Koltsfocsop");
+            Tablainfo koltsalcsop = fak.GetKodtab("C", "Koltsalcsop");
+            Tablainfo koltcsop = fak.GetBySzintPluszTablanev ("C", "KOLTSEGCSOPORT");
+            Tablainfo koltsegkod = fak.GetBySzintPluszTablanev("C", "KOLTSEGKOD");
+        }
+    }
+}

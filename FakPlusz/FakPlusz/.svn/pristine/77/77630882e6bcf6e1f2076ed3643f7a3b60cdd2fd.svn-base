@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz;
+using FakPlusz.Alapfunkciok;
+using FakPlusz.Formok;
+using FakPlusz.SzerkesztettListak;
+
+namespace FakPlusz.Alapfunkciok
+{
+    public partial class KezdetiAblak : Form
+    {
+        public DataView view = new DataView();
+        private FakUserInterface Fak;
+        private AdatTabla basetabla = new AdatTabla("BASE");
+        public KezdetiAblak()
+        {
+            InitializeComponent();
+            dataGridView1.AutoGenerateColumns = false;
+        }
+        public void OpenKezdeti(FakUserInterface fak, string[] szovegek)
+        {
+            Fak = fak;
+            Sqlinterface.Select((DataTable)basetabla, fak.Rendszerconn, "BASE", "", "order by SORREND", false);
+            long maxsorsz = Convert.ToInt64(basetabla.Rows[basetabla.Rows.Count - 1]["SORREND"].ToString());
+            foreach (string szov in szovegek)
+            {
+                maxsorsz++;
+                DataRow newrow = basetabla.NewRow();
+                newrow["SORREND"] = maxsorsz;
+                newrow["SZOVEG"] = szov;
+                basetabla.Rows.Add(newrow);
+            }
+            view.Table = basetabla;
+            dataGridView1.DataSource = view;
+            DataGridViewCheckBoxColumn chcol = (DataGridViewCheckBoxColumn)dataGridView1.Columns[1];
+            DataGridViewTextBoxColumn tcol = (DataGridViewTextBoxColumn)dataGridView1.Columns[0];
+            tcol.DataPropertyName = "SZOVEG";
+            this.Visible = true;
+            dataGridView1.Visible = true;
+            this.Refresh();
+        }
+        //public void Sorkesz(string sorszam)
+        //{
+        //    for (int i = 0; i < view.Count; i++)
+        //    {
+        //        if (view[i].Row["SORSZAM"].ToString() == sorszam)
+        //        {
+        //            DataGridViewCheckBoxCell cell = (DataGridViewCheckBoxCell)dataGridView1.Rows[i].Cells[1];
+        //            cell.Value = true;
+        //            Fak.SetAktRowVisible(dataGridView1, i);
+        //            this.Refresh();
+        //            break;
+        //        }
+        //    }
+        //}
+        public void Sorkesz(string szoveg)
+        {
+            for (int i = 0; i < view.Count; i++)
+            {
+                if (view[i].Row["SZOVEG"].ToString() == szoveg)
+                {
+                    DataGridViewCheckBoxCell cell = (DataGridViewCheckBoxCell)dataGridView1.Rows[i].Cells[1];
+                    cell.Value = true;
+                    Fak.SetAktRowVisible(dataGridView1, i);
+                    this.Refresh();
+                    break;
+                }
+            }
+        }
+
+    }
+}

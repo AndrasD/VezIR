@@ -1,0 +1,4 @@
+[Data Source=localhost\SQLSERVER;Initial Catalog=vezir_rendszer;Integrated Security=True],
+[Data Source=localhost\SQLSERVER;Initial Catalog=vezir_user;Integrated Security=True],
+[Data Source=localhost\SQLSERVER;Initial Catalog=vezir_alkalm1;Integrated Security=True]
+

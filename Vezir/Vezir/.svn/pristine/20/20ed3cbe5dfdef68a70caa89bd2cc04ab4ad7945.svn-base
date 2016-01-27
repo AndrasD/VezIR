@@ -1,0 +1,170 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir.ENYEM.Main
+{
+    public partial class Tesztlap : Base
+    {
+        Panel Panel;
+        Control[] controlok;
+        ToolStripMenuItem Teszt;
+        private Tablainfo koltsfocsopinfo;
+        private Tablainfo koltsalcsopinfo;
+        private Tablainfo koltscsopinfo;
+        private Tablainfo koltsegkodok;
+        private Tablainfo termfocsopinfo;
+        private Tablainfo termalcsopinfo;
+        private Tablainfo termcsopinfo;
+        private Tablainfo termekkodok;
+        private Tablainfo koltsfocsopalcsop;
+        private Tablainfo koltsalcsopcsop;
+        private Tablainfo koltscsopkod;
+        private Tablainfo termfocsopalcsop;
+        private Tablainfo termalcsopcsop;
+        private Tablainfo termcsopkod;
+
+        public Tesztlap(FakUserInterface fak, Panel panel, ToolStripMenuItem teszt)
+        {
+            InitializeComponent();
+            FakUserInterface = fak;
+            Panel = panel;
+            Teszt = teszt;
+            this.Dock = DockStyle.Fill;
+            koltsfocsopinfo = FakUserInterface.GetKodtab("C", "Koltsfocsop");
+            koltsalcsopinfo = FakUserInterface.GetKodtab("C", "Koltsalcsop");
+            koltscsopinfo = FakUserInterface.GetBySzintPluszTablanev("C", "KOLTSEGCSOPORT");
+            koltsegkodok = FakUserInterface.GetBySzintPluszTablanev("C", "KOLTSEGKOD");
+            termekkodok = FakUserInterface.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            termfocsopinfo = FakUserInterface.GetKodtab("C", "Termfocsop");
+            termalcsopinfo = FakUserInterface.GetKodtab("C", "Termalcsop");
+            termcsopinfo = FakUserInterface.GetKodtab("C", "Termcsop");
+            termekkodok = FakUserInterface.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            termfocsopalcsop = FakUserInterface.GetOsszef("C", "Termfocsopalcsop");
+            termalcsopcsop = FakUserInterface.GetOsszef("C", "Termalcsopcsop");
+            termcsopkod = FakUserInterface.GetOsszef("C", "Termcsopkod");
+            koltsfocsopalcsop = FakUserInterface.GetOsszef("C", "Koltsfocsopalcsop");
+            koltsalcsopcsop = FakUserInterface.GetOsszef("C", "Koltsalcsopcsop");
+            koltscsopkod = FakUserInterface.GetOsszef("C", "Koltscsopkod");
+        }
+        public void ShowTesztlap()
+        {
+            controlok = new Control[Panel.Controls.Count];
+            for (int i = 0; i < Panel.Controls.Count; i++)
+                controlok[i] = Panel.Controls[i];
+            Panel.Controls.Clear();
+            Panel.Controls.Add(this);
+            treeView1.Nodes.Clear();
+            treeView2.Nodes.Clear();
+            treeView3.Nodes.Clear();
+            string[] termfocsopidk;
+            string[] termfocsopszovegek;
+            string[] termalcsopidk;
+            string[] termalcsopszovegek;
+            string[] termcsopidk;
+            string[] termcsopszovegek;
+            string[] termkodidk;
+            string[] termkodszovegek;
+            string[] koltsfocsopidk;
+            string[] koltsfocsopszovegek;
+            string[] koltsalcsopidk;
+            string[] koltsalcsopszovegek;
+            string[] koltscsopidk;
+            string[] koltscsopszovegek;
+            string[] koltskodidk;
+            string[] koltskodszovegek;
+            termfocsopidk = FakUserInterface.GetTartal(termfocsopinfo, "SORSZAM");
+            termfocsopszovegek= FakUserInterface.GetTartal(termfocsopinfo,"SZOVEG");
+            koltsfocsopidk = FakUserInterface.GetTartal(koltsfocsopinfo, "SORSZAM");
+            koltsfocsopszovegek = FakUserInterface.GetTartal(koltsfocsopinfo, "SZOVEG");
+            for (int i = 0; i < termfocsopidk.Length; i++)
+            {
+                string egytermfocsopid = termfocsopidk[i];
+                string egytermfocsopszov = termfocsopszovegek[i];
+                TreeNode focsopnode = new TreeNode(egytermfocsopszov);
+                treeView1.Nodes.Add(focsopnode);
+                termalcsopidk = FakUserInterface.GetTartal(termfocsopalcsop, "SORSZAM2", "SORSZAM1", egytermfocsopid);
+                termalcsopszovegek = FakUserInterface.GetTartal(termalcsopinfo, "SZOVEG", "SORSZAM", termalcsopidk);
+                for (int j = 0; j < termalcsopidk.Length; j++)
+                {
+                    string egytermalcsopid = termalcsopidk[j];
+                    string egytermalcsopszov = termalcsopszovegek[j];
+                    TreeNode alcsopnode = new TreeNode(egytermalcsopszov);
+                    focsopnode.Nodes.Add(alcsopnode);
+                    termcsopidk = FakUserInterface.GetTartal(termalcsopcsop, "SORSZAM2", "SORSZAM1", egytermalcsopid);
+                    termcsopszovegek = FakUserInterface.GetTartal(termcsopinfo, "SZOVEG", "SORSZAM", termcsopidk);
+                    for (int k = 0; k < termcsopidk.Length; k++)
+                    {
+                        string egytermcsopid = termcsopidk[k];
+                        string egytermcsopszov = termcsopszovegek[k];
+                        TreeNode csopnode = new TreeNode(egytermcsopszov);
+                        alcsopnode.Nodes.Add(csopnode);
+                        termkodidk = FakUserInterface.GetTartal(termcsopkod, "SORSZAM2", "SORSZAM1", egytermcsopid);
+                        termkodszovegek = FakUserInterface.GetTartal(termekkodok, "SZOVEG", "TERMEKKOD_ID", termkodidk);
+                        for (int l = 0; l < termkodidk.Length; l++)
+                        {
+                            string egykod = termkodidk[l];
+                            string egyszov = termkodszovegek[l];
+                            TreeNode kodnode = new TreeNode(egyszov);
+                            csopnode.Nodes.Add(kodnode);
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < koltsfocsopidk.Length; i++)
+            {
+                string egykoltsfocsopid = koltsfocsopidk[i];
+                string egykoltsfocsopszov = koltsfocsopszovegek[i];
+                TreeNode focsopnode = new TreeNode(egykoltsfocsopszov);
+                treeView2.Nodes.Add(focsopnode);
+                koltsalcsopidk = FakUserInterface.GetTartal(koltsfocsopalcsop, "SORSZAM2", "SORSZAM1", egykoltsfocsopid);
+                koltsalcsopszovegek = FakUserInterface.GetTartal(koltsalcsopinfo, "SZOVEG", "SORSZAM", koltsalcsopidk);
+                for (int j = 0; j < koltsalcsopidk.Length; j++)
+                {
+                    string egykoltsalcsopid = koltsalcsopidk[j];
+                    string egykoltsalcsopszov = koltsalcsopszovegek[j];
+                    TreeNode alcsopnode = new TreeNode(egykoltsalcsopszov);
+                    focsopnode.Nodes.Add(alcsopnode);
+                    koltscsopidk = FakUserInterface.GetTartal(koltsalcsopcsop, "SORSZAM2", "SORSZAM1", egykoltsalcsopid);
+                    koltscsopszovegek = FakUserInterface.GetTartal(koltscsopinfo, "SZOVEG", "KOLTSEGCSOPORT_ID", koltscsopidk);
+                    for (int k = 0; k < koltscsopidk.Length; k++)
+                    {
+                        string egykoltscsopid = koltscsopidk[k];
+                        string egykoltscsopszov = koltscsopszovegek[k];
+                        TreeNode csopnode = new TreeNode(egykoltscsopszov);
+                        alcsopnode.Nodes.Add(csopnode);
+                        koltskodidk = FakUserInterface.GetTartal(koltscsopkod, "SORSZAM2", "SORSZAM1", egykoltscsopid);
+                        koltskodszovegek = FakUserInterface.GetTartal(koltsegkodok, "SZOVEG", "KOLTSEGKOD_ID", koltskodidk);
+                        for (int l = 0; l < koltskodidk.Length; l++)
+                        {
+                            string egykod = koltskodidk[l];
+                            string egyszov = koltskodszovegek[l];
+                            TreeNode kodnode = new TreeNode(egyszov);
+                            csopnode.Nodes.Add(kodnode);
+                        }
+                    }
+                }
+            }
+        }
+
+        public override void ok_Click(object sender, EventArgs e)
+        {
+            Panel.Controls.Clear();
+            for (int i = 0; i < controlok.Length; i++)
+                Panel.Controls.Add(controlok[i]);
+            Teszt.Visible = true;
+        }
+    }
+}

@@ -1,0 +1,257 @@
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using FakPlusz.Alapfunkciok;
+using FakPlusz;
+using FakPlusz.Alapcontrolok;
+using FakPlusz.UserAlapcontrolok;
+using FakPlusz.Formok;
+using FakPlusz.VezerloFormok;
+
+namespace Vezir
+{
+    public partial class UjPartnerUserControl: ControlAlap
+    {
+        private Tablainfo Szamlainfo;
+        private Tablainfo Partnerinfo;
+        private Tablainfo semainfo;
+        private Tablainfo semakoltsinfo;
+        private Tablainfo koltsinfo;
+        private Tablainfo termekinfo;
+        private Tablainfo koltsszazalinfo;
+        private ComboBox Partnercombo;
+        private FakUserInterface FakUserInterface;
+        private MezoControlCollection aktcontinfo;
+        private UserControlInfo usercontrolinfo;
+        private Vezerloinfo Vezerles;
+        private int comboselect;
+        private int partnerinfoviewindex;
+        private string filter;
+        private DataTable tabla = new DataTable();
+        private bool lehetvevo;
+        private bool lehetszallito;
+        private bool hiba = false;
+        private MezoTag vevoetag;
+        private MezoTag szallitoetag;
+        private MezoTag sematag;
+        private MezoTag tetelkodtag;
+        private MezoTag koltsegkodtag;
+        private ArrayList fileinfo;
+        private ArrayList szovinfo;
+        private string[] comboidk;
+        private Cols egycol;
+        private VezerloControl VezerloControl;
+        private UjPartner UjPartner ;
+        private Controltipus partnercontrol;
+        public UjPartnerUserControl(FakUserInterface fak, VezerloControl hivo, UjPartner ujpartner,Vezerloinfo aktivvezerles)
+        {
+            InitializeComponent();
+            tabla.Columns.Add(new DataColumn("Költségkód"));
+            tabla.Columns.Add(new DataColumn("Felosztási százalék"));
+            ParameterAtvetel(fak, hivo, aktivvezerles);
+            VezerloControl = hivo;
+            UjPartner = ujpartner;
+            Vezerles = aktivvezerles;
+            FakUserInterface = fak;
+            AlapinfoInit(new object[] { new object[] { Alapinfotipus.Alap, new Panel[] { panel1 } } });
+            partnercontrol = ControltipusCollection[0];
+        }
+        public void UjPartnerControlInicializalas(string hivonev,Tablainfo szamlainfo,Tablainfo partnerinfo,ComboBox partnercombo)
+        {
+            Szamlainfo = szamlainfo;
+            Partnerinfo = partnerinfo;
+            Partnercombo = partnercombo;
+            filter = Partnerinfo.DataView.RowFilter;
+            comboselect = partnercombo.SelectedIndex;
+            partnerinfoviewindex = partnerinfo.ViewSorindex;
+            vevoetag = (MezoTag)vevoe.Tag;
+            szallitoetag = (MezoTag)szallitoe.Tag;
+            sematag = (MezoTag)sema.Tag;
+            koltsegkodtag = (MezoTag)koltsegkod.Tag;
+            egycol = sematag.Egyinp;
+            Tablainfo koltscsopinfo = FakUserInterface.GetBySzintPluszTablanev("C", "KOLTSEGCSOPORT");
+            FakUserInterface.Combokupdate(koltscsopinfo.TablaTag);
+            string[] idk = FakUserInterface.GetTartal(koltscsopinfo, "KOLTSEGCSOPORT_ID", "SEMAE", "I");
+            if (idk != null)
+            {
+                ArrayList ar = new ArrayList(idk);
+                string[] szov = FakUserInterface.GetTartal(koltscsopinfo, "SZOVEG", "KOLTSEGCSOPORT_ID", idk);
+
+                fileinfo = egycol.Combo_Info.ComboFileinfo;
+                szovinfo = egycol.Combo_Info.ComboInfo;
+                comboidk = egycol.Combo_Info.ComboIdk;
+                for (int i = 0; i < comboidk.Length; i++)
+                {
+                    string egyid = comboidk[i];
+                    if (ar.IndexOf(egyid) == -1)
+                    {
+                        int j = fileinfo.IndexOf(egyid);
+                        fileinfo.RemoveAt(j);
+                        szovinfo.RemoveAt(j);
+                    }
+                }
+            }
+            sema.Items.Clear();
+            for (int i = 0; i < szovinfo.Count; i++)
+                sema.Items.Add(szovinfo[i].ToString());
+            Partnerinfo.ViewSorindex = -1;
+
+            if (hivonev == "Bevszla")
+            {
+                lehetvevo = true;
+                vevoe.Checked = true;
+                vevoe.Enabled = false;
+                lehetszallito = false;
+                szallitoe.Checked = false;
+                szallitoe.Enabled = true;
+                szallitoetag.SetValue("N");
+                sema.Enabled = false;
+                sema.Text = "";
+                termekkod.Enabled = true;
+                termekkod.SelectedIndex = 0;
+                koltsegkod.Enabled = false;
+                koltsegkod.Text = "";
+            }
+            else
+            {
+                lehetvevo = false;
+                vevoe.Checked = false;
+                vevoe.Enabled = true;
+                vevoetag.SetValue("N");
+                lehetszallito = true;
+                szallitoe.Checked = true;
+                szallitoe.Enabled = false;
+                sema.Enabled = true;
+                sema.SelectedIndex = 0;
+                termekkod.Text = "";
+                termekkod.Enabled = false;
+                koltsegkod.Enabled = true;
+                koltsegkod.SelectedIndex = 0;
+            }
+            Rendben.Visible = false;
+            button3.Visible = false;
+            groupBox2.Visible = false;
+            groupBox2.BackColor = FakUserInterface.AktivControlBackColor;
+            semainfo = FakUserInterface.GetKodtab("C", "Koltscsop");
+            semakoltsinfo = FakUserInterface.GetOsszef("C", "Koltscsopkod");
+            koltsszazalinfo = FakUserInterface.GetCsoport("C", "Feloszt");
+            termekinfo = FakUserInterface.GetBySzintPluszTablanev("C", "TERMEKKOD");
+            koltsinfo = FakUserInterface.GetBySzintPluszTablanev("C", "KOLTSEGKOD");
+            textBox1.Text = "";
+        }
+        public void UjPartnerRogzit()
+        {
+            string text = textBox1.Text;
+            Hibavizsg(partnercontrol);
+            Adatsortolt(new Tablainfo[] { partnercontrol.Tablainfo });
+            ControltipusCollection.Rogzit(partnercontrol);
+            Partnercombo.Text = text;
+        }
+        public override bool EgyediValidalas(MezoTag egytag)
+        {
+            bool hiba = false;
+            Control control = egytag.Control;
+            string contnev = egytag.Egyinp.ColumnName;
+            MezoTag tag;
+            MezoTag tag1;
+            switch (contnev)
+            {
+                case "SZOVEG":
+                    if (control.Text != "")
+                    {
+                        Partnerinfo.DataView.RowFilter = "SZOVEG='" + control.Text.Trim() + "'";
+                        if (Partnerinfo.DataView.Count != 0)
+                        {
+                            hiba = true;
+                            egytag.Hibaszov = " Már van ilyen nevü partner!";
+                        }
+                        Partnerinfo.DataView.RowFilter = filter;
+                    }
+                    break;
+                case "BEVPARTNER":
+                    tag=(MezoTag)termekkod.Tag;
+                    if (!vevoe.Checked)
+                    {
+
+                        tag.SetValue("");
+                        termekkod.Enabled = false;
+                    }
+                    else
+                    {
+                        termekkod.Enabled = true;
+                        if (termekkod.Text == "")
+                        {
+                            termekkod.SelectedIndex = 0;
+                            tag.SetValue(termekkod.Text);
+                        }
+                    }
+                    break;
+                case "KOLTSPARTNER":
+                    tag = (MezoTag)koltsegkod.Tag;
+                    tag1 = (MezoTag)sema.Tag;
+                    if (!szallitoe.Checked)
+                    {
+                        tag.SetValue("");
+                        koltsegkod.Enabled = false;
+                        tag1.SetValue("");
+                        sema.Enabled = false;
+                    }
+                    else
+                    {
+                        koltsegkod.Enabled = true;
+                        if (koltsegkod.Text == "")
+                        {
+                            koltsegkod.SelectedIndex = 0;
+                            tag.SetValue(koltsegkod.Text);
+                        }
+                        sema.Enabled = true;
+                    }
+                    break;
+                case "TERMEKKOD_ID":
+                    if (vevoe.Checked && termekkod.Text == "")
+                    {
+                        hiba = true;
+                        egytag.Hibaszov = "Nem lehet üres!";
+                    }
+                    break;
+                case "KOLTSEGKOD_ID":
+                    if (szallitoe.Checked && koltsegkod.Text == "")
+                    {
+                        hiba = true;
+                        egytag.Hibaszov = "Nem lehet üres!";
+                    }
+                    break;
+                case "SEMA_ID":
+                    break;
+            }
+            if (!hiba)
+            {
+                bool taghiba = false;
+
+                foreach (MezoTag ttag in MezoControlInfok[0].Inputeleminfok)
+                    if (ttag.Hibaszov != "")
+                        taghiba = true;
+                Rendben.Visible = !taghiba;
+            }
+            return hiba;  
+        }
+
+        private void Rendben_Click(object sender, EventArgs e)
+        {
+            UjPartner.DialogResult = DialogResult.OK;
+ //           UjPartner.Close();
+        }
+
+        private void Vissza_Click(object sender, EventArgs e)
+        {
+            UjPartner.DialogResult = DialogResult.Cancel;
+ //           UjPartner.Close();
+        }
+    }
+}
