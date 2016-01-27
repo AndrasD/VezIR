@@ -118,21 +118,21 @@
     </Compile>
     <Compile Include="Bevetelekrpt.cs">
       <DependentUpon>Bevetelekrpt.rpt</DependentUpon>
-      <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Bevkiad.cs">
       <DependentUpon>Bevkiad.rpt</DependentUpon>
-      <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Egyenlegrpt.cs">
       <DependentUpon>Egyenlegrpt.rpt</DependentUpon>
-      <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ENYEM\Main\Main.cs">
       <SubType>Form</SubType>
@@ -148,9 +148,9 @@
     </Compile>
     <Compile Include="Kiadasrpt.cs">
       <DependentUpon>Kiadasrpt.rpt</DependentUpon>
-      <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ENYEM\Vezerles\AlapParameterControl.cs">
       <SubType>UserControl</SubType>
@@ -443,12 +443,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="DataBase\vezir_alapalkalm.bak" />
-    <None Include="DataBase\vezir_alaprendszer.bak" />
-    <None Include="DataBase\vezir_alapuser.bak" />
-    <None Include="DataBase\vezir_alkalm1.bak" />
-    <None Include="DataBase\vezir_rendszer.bak" />
-    <None Include="DataBase\vezir_user.bak" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -491,7 +485,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="VezirDataSet.cs">
       <DependentUpon>VezirDataSet.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="VezirDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
