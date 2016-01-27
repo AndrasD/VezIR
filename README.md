@@ -1,0 +1,2 @@
+# VezIR
+VEZetői Információs Rendszer
