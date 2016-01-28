@@ -38,3 +38,6 @@ C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Vezir\Vezir\obj\Debug\Ve
 C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Vezir\Vezir\obj\Debug\Vezir.Folyoosztottkivet.resources
 C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Vezir\Vezir\obj\Debug\Vezir.csprojResolveAssemblyReference.cache
 C:\Users\Gittacsi\Documents\Visual Studio 2010\Projects\Vezir\Vezir\obj\Debug\Vezir.csproj.GenerateResource.Cache
+C:\Users\Gittacsi\Documents\git\VezIR\Vezir\Vezir\bin\Debug\Vezir.exe.config
+C:\Users\Gittacsi\Documents\git\VezIR\Vezir\Vezir\obj\Debug\Vezir.exe
+C:\Users\Gittacsi\Documents\git\VezIR\Vezir\Vezir\obj\Debug\Vezir.pdb
